@@ -1,0 +1,3 @@
+{"_key":"pay-10001","eventType":"SettlementPosted","merchantId":"mrc_8821","amount":149.99,"currency":"USD","status":"SETTLED","ts":"2026-07-28T01:00:00Z"}
+{"_key":"pay-10002","eventType":"SettlementPosted","merchantId":"mrc_8821","amount":12.50,"currency":"USD","status":"SETTLED","ts":"2026-07-28T01:05:12Z"}
+{"_key":"pay-10003","eventType":"ChargebackOpened","merchantId":"mrc_9910","amount":89.00,"currency":"USD","reason":"fraud","ts":"2026-07-28T01:10:00Z"}

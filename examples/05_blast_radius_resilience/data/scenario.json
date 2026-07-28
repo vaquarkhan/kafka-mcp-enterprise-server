@@ -1,0 +1,7 @@
+{
+  "dataPlaneTopic": "agent.orders",
+  "rogueIdentity": "compromised-bot",
+  "innocentIdentity": "human-operator",
+  "maxDestructivePerMinute": 3,
+  "tempTopics": ["agent.tmp0", "agent.tmp1", "agent.tmp2", "agent.tmp3", "agent.tmp4"]
+}

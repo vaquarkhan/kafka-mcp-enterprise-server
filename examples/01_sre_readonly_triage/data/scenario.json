@@ -1,0 +1,9 @@
+{
+  "persona": "sre-bot@nightshift",
+  "mission": "Triage checkout/payments errors without mutating the cluster",
+  "allowed_topic_prefixes": ["agent.observability."],
+  "readonly": true,
+  "topics": {
+    "agent.observability.errors": "examples/01_sre_readonly_triage/data/observability_errors.jsonl"
+  }
+}

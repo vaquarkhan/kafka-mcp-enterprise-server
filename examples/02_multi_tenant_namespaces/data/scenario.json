@@ -1,0 +1,6 @@
+{
+  "tenants": [
+    {"id": "payments", "prefix": "team.payments.", "identity": "agent:payments"},
+    {"id": "inventory", "prefix": "team.inventory.", "identity": "agent:inventory"}
+  ]
+}

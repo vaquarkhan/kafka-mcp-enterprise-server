@@ -1,0 +1,3 @@
+{"caseId":"C-10021","status":"waiting-on-customer","channel":"email","priority":"P2","summary":"Cannot complete checkout on mobile","updatedAt":"2026-07-28T00:10:00Z"}
+{"caseId":"C-10022","status":"in-progress","channel":"chat","priority":"P1","summary":"Refund pending for order ORD-7781","updatedAt":"2026-07-28T00:12:00Z"}
+{"caseId":"C-10023","status":"open","channel":"phone","priority":"P3","summary":"Customer jane.doe@example.com called +1-415-555-0199 about invoice INV-4401","updatedAt":"2026-07-28T00:15:00Z"}

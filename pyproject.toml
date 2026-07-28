@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kafka-mcp-enterprise-kip1318"
+version = "0.1.0"
+description = "Kafka MCP Enterprise reference server for KIP-1318 — fail-closed security controls, stdlib-only (conformance / teaching; not the official ASF Java module)."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "Apache-2.0" }
+authors = [
+  { name = "Kafka MCP KIP-1318 reference contributors" },
+]
+keywords = [
+  "kafka",
+  "mcp",
+  "kip-1318",
+  "model-context-protocol",
+  "security",
+  "reference",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+  "Topic :: System :: Distributed Computing",
+  "Typing :: Typed",
+]
+# Core stays stdlib-only — no hard runtime dependencies.
+dependencies = []
+
+[project.optional-dependencies]
+# Optional: not required for the reference. Install only if you wire custom exporters.
+otel = [
+  "opentelemetry-api>=1.20.0",
+  "opentelemetry-sdk>=1.20.0",
+]
+dev = [
+  "build>=1.0.0",
+  "twine>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka"
+Documentation = "https://issues.apache.org/jira/browse/KAFKA-20436"
+"KIP-1318" = "https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka"
+"Jira KAFKA-20436" = "https://issues.apache.org/jira/browse/KAFKA-20436"
+"Bug Tracker" = "https://issues.apache.org/jira/browse/KAFKA-20436"
+
+[project.scripts]
+kafka-mcp-enterprise = "kafka_mcp.cli:main_stdio"
+
+[tool.setuptools]
+packages = ["kafka_mcp"]
+
+[tool.setuptools.package-data]
+kafka_mcp = ["py.typed"]

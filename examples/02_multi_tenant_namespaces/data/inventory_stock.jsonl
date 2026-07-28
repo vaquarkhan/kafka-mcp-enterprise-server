@@ -1,0 +1,3 @@
+{"_key":"inv-5001","eventType":"StockAdjusted","sku":"SKU-10042","warehouse":"W-SEA-01","delta":-3,"onHand":41,"ts":"2026-07-28T01:02:00Z"}
+{"_key":"inv-5002","eventType":"StockAdjusted","sku":"SKU-22011","warehouse":"W-DFW-02","delta":25,"onHand":200,"ts":"2026-07-28T01:08:00Z"}
+{"_key":"inv-5003","eventType":"ReservationFailed","sku":"SKU-10042","warehouse":"W-SEA-01","requested":10,"onHand":41,"ts":"2026-07-28T01:12:00Z"}

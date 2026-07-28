@@ -1,0 +1,10 @@
+{
+  "readerIdentity": "reader",
+  "readerAcls": [
+    {"operation": "READ", "prefix": "agent."},
+    {"operation": "READ", "prefix": "secret."}
+  ],
+  "sensitiveTopicPatterns": ["secret.*"],
+  "agentTopic": "agent.events",
+  "sensitiveTopic": "secret.payroll"
+}

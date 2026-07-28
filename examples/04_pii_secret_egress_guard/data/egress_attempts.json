@@ -1,0 +1,7 @@
+{
+  "allowedEvent": {"caseId":"C-10024","status":"resolved","summary":"Password reset completed"},
+  "blockedSecrets": [
+    {"label": "aws_access_key", "value": "debug paste AKIAIOSFODNN7EXAMPLE into case note"},
+    {"label": "jwt", "value": "token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdXBwb3J0In0.dGVzdHNpZw"}
+  ]
+}

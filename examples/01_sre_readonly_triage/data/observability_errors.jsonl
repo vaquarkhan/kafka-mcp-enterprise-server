@@ -1,0 +1,5 @@
+{"ts":"2026-07-28T02:14:03Z","level":"ERROR","service":"checkout","env":"prod","region":"us-east-1","traceId":"tr_9f2a1c","msg":"payment gateway timeout after 3 retries","errorCode":"GATEWAY_TIMEOUT","latencyMs":3201}
+{"ts":"2026-07-28T02:14:11Z","level":"WARN","service":"checkout","env":"prod","region":"us-east-1","traceId":"tr_9f2a1d","msg":"cart lock contention","skuCount":4}
+{"ts":"2026-07-28T02:15:02Z","level":"ERROR","service":"payments","env":"prod","region":"us-east-1","traceId":"tr_aa01","msg":"issuer 5xx on authorize","merchantId":"mrc_8821","httpStatus":502}
+{"ts":"2026-07-28T02:15:44Z","level":"INFO","service":"payments","env":"prod","region":"us-east-1","traceId":"tr_aa02","msg":"fallback to secondary acquirer succeeded"}
+{"ts":"2026-07-28T02:16:10Z","level":"ERROR","service":"inventory","env":"prod","region":"us-west-2","traceId":"tr_bb10","msg":"stock reservation failed","sku":"SKU-10042","warehouse":"W-SEA-01"}

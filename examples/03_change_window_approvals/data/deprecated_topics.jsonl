@@ -1,0 +1,2 @@
+{"_key":"dep-v1","name":"agent.deprecated.checkout.v1","reason":"replaced by agent.checkout.v2","owner":"platform","created":"2025-11-01","lastProduce":"2026-03-12"}
+{"_key":"dep-v0","name":"agent.deprecated.cart.v0","reason":"legacy monolith offboarding","owner":"checkout","created":"2024-06-01","lastProduce":"2026-01-02"}
