@@ -81,6 +81,21 @@ git push origin v0.1.0
 
 Tag must match a version you intend to publish; PyPI rejects re-uploading the same version.
 
+### Troubleshooting: `400 Non-user identities cannot create new projects`
+
+Trusted Publishing worked, but the **pending publisher project name** did not match `pyproject.toml` `[project].name`.
+
+1. PyPI → Account → **Publishing** → edit/recreate the pending publisher.  
+2. **PyPI project name must be exactly:** `kafka-mcp-enterprise-kip1318` (hyphens, not underscores).  
+3. Re-run: Actions → **publish** → **Re-run failed jobs**, or:
+
+```bash
+gh workflow run publish.yml
+# or re-push the tag after deleting it locally/remotely (only if needed)
+```
+
+Do **not** change the package name in git unless you intentionally want a different PyPI name.
+
 ---
 
 ## Local build check (optional)

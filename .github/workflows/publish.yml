@@ -20,6 +20,13 @@ on:
   push:
     tags:
       - "v*"
+  # Re-run after fixing Trusted Publisher without retagging
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type publish to confirm a manual publish of the current ref'
+        required: true
+        default: 'publish'
 
 permissions:
   contents: read
