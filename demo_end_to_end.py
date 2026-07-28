@@ -49,6 +49,7 @@ def main() -> None:
         rate_admin_requests_per_second=50,
         policy_engine=deny_acls,
         max_destructive_per_minute=100,
+        approval_signing_secret=b"demo-approval-key",
     )
     s = KafkaMcpServer(cfg)
     secret = cfg.approval_signing_secret
@@ -132,7 +133,7 @@ def main() -> None:
                 s,
                 "create_acls",
                 {
-                    "bindings": [{"principal": "User:x", "operation": "ALL", "resource": "*"}],
+                    "bindings": [{"principal": "User:x", "operation": "ALL", "resource": "agent.x"}],
                     "_approval_token": mint(secret, "create_acls"),
                 },
                 sess,
@@ -140,7 +141,13 @@ def main() -> None:
         ),
     )
 
-    s_ro = KafkaMcpServer(Config(readonly=True, allowed_topic_prefixes=["agent."]))
+    s_ro = KafkaMcpServer(
+        Config(
+            readonly=True,
+            allowed_topic_prefixes=["agent."],
+            approval_signing_secret=b"demo-approval-key",
+        )
+    )
     s_ro.backend.create_topic("agent.ro")
     show(
         13,
@@ -148,7 +155,13 @@ def main() -> None:
         track(call(s_ro, "produce_message", {"topic": "agent.ro", "value": "nope"}, {"identity": "ro"})),
     )
 
-    s_rate = KafkaMcpServer(Config(rate_requests_per_second=1, rate_admin_requests_per_second=1))
+    s_rate = KafkaMcpServer(
+        Config(
+            rate_requests_per_second=1,
+            rate_admin_requests_per_second=1,
+            approval_signing_secret=b"demo-approval-key",
+        )
+    )
     for i in range(4):
         show(
             14 + i,
@@ -156,7 +169,7 @@ def main() -> None:
             track(call(s_rate, "list_topics", {}, {"identity": "bursty"})),
         )
 
-    s_dep = KafkaMcpServer(Config())
+    s_dep = KafkaMcpServer(Config(approval_signing_secret=b"demo-approval-key"))
     s_dep.backend._inject_dependency_failure(True)
     for i in range(3):
         show(
@@ -166,7 +179,13 @@ def main() -> None:
         )
 
     # Step 21: rogue quarantine (-32047)
-    s_q = KafkaMcpServer(Config(max_destructive_per_minute=2, allowed_topic_prefixes=["agent."]))
+    s_q = KafkaMcpServer(
+        Config(
+            max_destructive_per_minute=2,
+            allowed_topic_prefixes=["agent."],
+            approval_signing_secret=b"demo-approval-key",
+        )
+    )
     for i in range(3):
         s_q.backend.create_topic(f"agent.q{i}")
     qsess = {"identity": "rogue-demo"}

@@ -31,6 +31,7 @@ def main() -> None:
     print("Goal: isolate admin outages; contain rogue destructive bursts")
 
     cfg = Config(
+        approval_signing_secret=b"example-approval-key",
         allowed_topic_prefixes=["agent."],
         max_destructive_per_minute=int(scenario["maxDestructivePerMinute"]),
         circuit_breaker_enabled=True,

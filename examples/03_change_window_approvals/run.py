@@ -22,6 +22,7 @@ from examples._common import (  # noqa: E402
     load_json,
     load_jsonl,
     step,
+    tool_result,
 )
 
 
@@ -33,6 +34,7 @@ def main() -> None:
     print(f"Approver: {ticket['approver']} · Agent: {ticket['agent']}")
 
     cfg = Config(
+        approval_signing_secret=b"example-approval-key",
         allowed_topic_prefixes=["agent."],
         tools_allowed=["create_topic", "delete_topic", "list_topics", "describe_topic"],
         approval_required_tools=["delete_topic"],
@@ -76,7 +78,7 @@ def main() -> None:
     )
 
     step(5, "Confirm target removed; sibling deprecated topic remains")
-    topics = (call(server, "list_topics", {}, session).get("result") or {}).get("topics") or []
+    topics = (tool_result(call(server, "list_topics", {}, session)) or {}).get("topics") or []
     gone = target not in topics
     sibling = "agent.deprecated.cart.v0" in topics
     print(f"  {'PASS' if gone else 'FAIL'}  target removed")

@@ -31,6 +31,7 @@ def main() -> None:
     print(f"Persona: {scenario['persona']}\nMission: {scenario['mission']}")
 
     cfg = Config(
+        approval_signing_secret=b"example-approval-key",
         readonly=True,
         tools_allowed=[
             "list_topics",
@@ -72,7 +73,9 @@ def main() -> None:
         session,
     )
     ok &= expect_ok(resp, "consume_messages allowed")
-    body = resp.get("result") or {}
+    from examples._common import tool_result
+
+    body = tool_result(resp) or {}
     recs = body.get("records") or []
     print(f"         assignment={body.get('assignment')} records={len(recs)}")
     if recs:

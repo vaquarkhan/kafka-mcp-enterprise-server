@@ -1,4 +1,4 @@
-"""Tool registry: 11 tools with kind/module/operation/resource_arg."""
+"""Tool registry: 11 tools with kind/module/operation/resource_arg + JSON Schemas."""
 
 from __future__ import annotations
 
@@ -9,6 +9,126 @@ from .backend import InMemoryKafka
 
 Handler = Callable[..., Any]
 Meta = Dict[str, Any]
+
+# A2: real JSON Schemas for tools/list (LLM / host argument guidance)
+TOOL_INPUT_SCHEMAS: Dict[str, Dict[str, Any]] = {
+    "list_topics": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": False,
+    },
+    "describe_topic": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "Topic name"},
+        },
+        "required": ["name"],
+        "additionalProperties": False,
+    },
+    "describe_cluster": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": False,
+    },
+    "list_consumer_groups": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": False,
+    },
+    "describe_consumer_group": {
+        "type": "object",
+        "properties": {
+            "groupId": {"type": "string", "description": "Consumer group id"},
+        },
+        "required": ["groupId"],
+        "additionalProperties": False,
+    },
+    "consume_messages": {
+        "type": "object",
+        "properties": {
+            "topic": {"type": "string"},
+            "maxMessages": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Max records to return (clamped by hard_max_records)",
+            },
+            "fromBeginning": {"type": "boolean"},
+            "groupId": {
+                "type": "string",
+                "description": "Optional; omit for Direct Partition Assignment",
+            },
+            "_approval_token": {
+                "type": "string",
+                "description": "Required when topic matches sensitive_topic_patterns",
+            },
+        },
+        "required": ["topic"],
+        "additionalProperties": False,
+    },
+    "create_topic": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "partitions": {"type": "integer", "minimum": 1},
+            "replicationFactor": {"type": "integer", "minimum": 1},
+            "config": {"type": "object", "additionalProperties": {"type": "string"}},
+        },
+        "required": ["name"],
+        "additionalProperties": False,
+    },
+    "alter_topic_config": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "config": {"type": "object", "additionalProperties": {"type": "string"}},
+        },
+        "required": ["name", "config"],
+        "additionalProperties": False,
+    },
+    "produce_message": {
+        "type": "object",
+        "properties": {
+            "topic": {"type": "string"},
+            "value": {"type": "string"},
+            "key": {"type": "string"},
+            "partition": {"type": "integer", "minimum": 0},
+        },
+        "required": ["topic"],
+        "additionalProperties": False,
+    },
+    "delete_topic": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "_approval_token": {"type": "string"},
+        },
+        "required": ["name"],
+        "additionalProperties": False,
+    },
+    "create_acls": {
+        "type": "object",
+        "properties": {
+            "bindings": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "resource": {"type": "string"},
+                        "resourceType": {
+                            "type": "string",
+                            "enum": ["TOPIC", "GROUP", "CLUSTER"],
+                        },
+                        "operation": {"type": "string"},
+                        "principal": {"type": "string"},
+                    },
+                },
+            },
+            "_approval_token": {"type": "string"},
+        },
+        "required": ["bindings"],
+        "additionalProperties": False,
+    },
+}
 
 
 def build_tools(backend: InMemoryKafka) -> Dict[str, Tuple[Handler, Meta]]:
@@ -42,7 +162,9 @@ def build_tools(backend: InMemoryKafka) -> Dict[str, Tuple[Handler, Meta]]:
         return backend.create_topic(
             name=params["name"],
             partitions=int(params.get("partitions", 1)),
-            replication_factor=int(params.get("replicationFactor", params.get("replication_factor", 1))),
+            replication_factor=int(
+                params.get("replicationFactor", params.get("replication_factor", 1))
+            ),
             config=params.get("config"),
         )
 
@@ -153,6 +275,7 @@ def build_tools(backend: InMemoryKafka) -> Dict[str, Tuple[Handler, Meta]]:
                 "kind": "destructive",
                 "module": "control_plane",
                 "operation": "ALTER",
+                # Scope checked via SecurityPipeline._check_create_acls_scope (bindings).
             },
         ),
     }

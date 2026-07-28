@@ -19,7 +19,7 @@ description: >-
 
 1. Read `AGENTS.md` at repo root.
 2. Prefer existing modules over new dependencies.
-3. After code changes run: `python run_tests.py` (expect `72/72`).
+3. After code changes run: `python run_tests.py` (expect `85/85`).
 4. Preserve honesty: taint best-effort; broker ACLs authoritative.
 
 ## Common workflows

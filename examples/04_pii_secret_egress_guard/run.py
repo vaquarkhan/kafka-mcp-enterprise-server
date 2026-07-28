@@ -32,6 +32,7 @@ def main() -> None:
     print("Goal: DLP on produce + scrub PII on consume using fixture case data")
 
     cfg = Config(
+        approval_signing_secret=b"example-approval-key",
         allowed_topic_prefixes=["support."],
         tools_allowed=["create_topic", "produce_message", "consume_messages"],
         dlp_mode="redact",
@@ -86,11 +87,14 @@ def main() -> None:
         session,
     )
     ok &= expect_ok(resp, "consume ok")
-    blob = str(resp.get("result"))
+    from examples._common import tool_result
+
+    domain = tool_result(resp) or {}
+    blob = str(domain)
     leaked = "jane.doe@example.com" in blob or "415-555-0199" in blob
     print(f"  {'PASS' if not leaked else 'FAIL'}  PII not present in consume result")
     ok &= not leaked
-    for rec in (resp.get("result") or {}).get("records") or []:
+    for rec in domain.get("records") or []:
         val = str(rec.get("value") or "")
         if "REDACTED" in val:
             print(f"         redacted sample: {val[:120]}…")

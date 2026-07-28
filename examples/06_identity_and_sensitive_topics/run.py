@@ -32,6 +32,7 @@ def main() -> None:
     print("Goal: ACL deny on create; approval for secret.* consume; PII scrub")
 
     cfg = Config(
+        approval_signing_secret=b"example-approval-key",
         identity_propagation=True,
         allowed_topic_prefixes=["agent.", "secret."],
         sensitive_topic_patterns=scenario["sensitiveTopicPatterns"],
@@ -104,7 +105,9 @@ def main() -> None:
         reader,
     )
     ok &= expect_ok(resp, "approved sensitive consume")
-    blob = str(resp.get("result"))
+    from examples._common import tool_result
+
+    blob = str(tool_result(resp) or {})
     leaked = "123-45-6789" in blob or "987-65-4321" in blob
     print(f"  {'PASS' if not leaked else 'FAIL'}  SSN redacted from payroll consume")
     ok &= not leaked

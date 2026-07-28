@@ -4,9 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from .errors import McpError
-
-UNAUTHORIZED = -32001
+from .errors import UNAUTHORIZED, McpError
 
 
 def validate_bearer(cfg: Any, claims: Optional[Dict[str, Any]]) -> bool:

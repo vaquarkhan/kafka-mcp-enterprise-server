@@ -1,4 +1,10 @@
-"""Token bucket, rate limiter, and circuit breaker primitives."""
+"""Token bucket, rate limiter, and circuit breaker primitives.
+
+C1 note: RateLimiter, CircuitBreaker, and AnomalyTracker are **per-process /
+in-memory**. Limits do not sync across replicas. For multi-instance HTTP
+deployments, treat them as per-instance or plug in a shared store (out of
+scope for this stdio reference).
+"""
 
 from __future__ import annotations
 

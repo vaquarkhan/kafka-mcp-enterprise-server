@@ -51,8 +51,8 @@ def run() -> Checker:
     r = call(s, "consume_messages", {"topic": "agent.guard", "maxMessages": 5})
     val = ((result(r) or {}).get("records") or [{}])[0].get("value", "")
     c.check(
-        "consume redacts email+ip+phone",
-        "a@b.co" not in val and "10.0.0.1" not in val and "415-555-1212" not in val,
+        "consume redacts email+phone (ipv4 redaction is opt-in)",
+        "a@b.co" not in val and "415-555-1212" not in val,
         val,
     )
 

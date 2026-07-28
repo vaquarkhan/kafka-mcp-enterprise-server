@@ -1,6 +1,6 @@
 # Testing
 
-## Conformance suite (72 checks)
+## Conformance suite (85 checks)
 
 ```bash
 python run_tests.py
@@ -14,8 +14,9 @@ python run_tests.py
 | `tests/test_report_mechanisms.py` | KIP mechanisms | 13 |
 | `tests/test_resources.py` | `kafka://` resources | 6 |
 | `tests/test_integration_stdio.py` | stdio subprocess | 8 |
+| `tests/test_audit_hardening.py` | Protocol + audit fixes (A1–B8/C) | 13 |
 
-**Total = 72.** Expect: `TOTAL: 72/72 passed, 0 failed`.
+**Total = 85.** Expect: `TOTAL: 85/85 passed, 0 failed`.
 
 ## Quick smoke (separate)
 
@@ -23,7 +24,7 @@ python run_tests.py
 python test_kafka_mcp.py
 ```
 
-16 checks covering a subset of security controls (not part of the 72).
+16 checks covering a subset of security controls (not part of the 85).
 
 ## Demo
 

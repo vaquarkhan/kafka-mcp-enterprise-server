@@ -1,14 +1,19 @@
-"""Configuration dataclass for the Kafka MCP reference server (32 fields)."""
+"""Configuration dataclass for the Kafka MCP reference server."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, Set
+
+
+# MCP protocol versions this reference speaks (server does not mirror arbitrary client claims).
+SUPPORTED_PROTOCOL_VERSIONS: Set[str] = {"2024-11-05"}
+DEFAULT_PROTOCOL_VERSION = "2024-11-05"
 
 
 @dataclass
 class Config:
-    """Authoritative config surface (~28 user-facing mcp.* properties + host keys)."""
+    """Authoritative config surface (~32 fields + host keys)."""
 
     bootstrap_servers: str = "in-memory:9092"
     transport: str = "stdio"
@@ -39,13 +44,17 @@ class Config:
     rate_admin_requests_per_second: int = 20
     oauth_expected_audience: Optional[str] = None
     oauth_expected_issuer: Optional[str] = None
-    approval_signing_secret: bytes = b"reference-approval-key"
+    # B1: no hardcoded default — must be set via Config/env for mint/verify to succeed.
+    approval_signing_secret: Optional[bytes] = None
     redaction_enabled: bool = True
     dlp_mode: str = "redact"  # redact | block | off
     dlp_block_categories: List[str] = field(
         default_factory=lambda: ["private_key", "aws_access_key", "jwt"]
     )
-    scrub_all_outputs: bool = True
+    # B8: do not scrub entire control-plane trees by default (breaks SRE triage).
+    scrub_all_outputs: bool = False
+    scrub_payloads_only: bool = True
+    dlp_redact_ipv4: bool = False
     redact_sensitive_configs: bool = True
     sensitive_topic_patterns: List[str] = field(default_factory=list)
     max_value_bytes: int = 1_000_000
@@ -54,4 +63,8 @@ class Config:
     ifc_strict: bool = False
     hard_max_records: int = 100
     hard_max_bytes: int = 1_048_576
+    # B4: off by default for harness; CLI warns loudly when False.
     identity_propagation: bool = False
+    taint_min_length: int = 8
+    taint_max_values: int = 256
+    approval_single_use_nonce: bool = True

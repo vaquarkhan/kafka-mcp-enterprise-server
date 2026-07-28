@@ -17,7 +17,7 @@ Instructions for **any** coding agent (Cursor, Kiro, GitHub Copilot, ChatGPT/Cod
 4. Keep **zero hard third-party deps** for core (`kafka_mcp/`). OTel is optional extra only.
 5. Do not commit `internal/` or `CURSOR-BUILD-INSTRUCTIONS.md` (gitignored).
 6. Destructive tools must stay behind allow-list + approval in production guidance.
-7. After behavior changes: `python run_tests.py` must stay **72/72**.
+7. After behavior changes: `python run_tests.py` must stay **85/85**.
 
 ## Layout
 
