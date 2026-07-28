@@ -17,6 +17,7 @@ echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise
 | **CLI** | `kafka-mcp-enterprise` |
 | **Import** | `import kafka_mcp` |
 | **Optional** | `pip install kafka-mcp-enterprise-kip1318[otel]` |
+| **Publish** | Tag `v*` → [`.github/workflows/publish.yml`](.github/workflows/publish.yml) (Trusted Publishing / OIDC — see [doc/publishing.md](doc/publishing.md)) |
 
 ### Agents & skills (Cursor, Kiro, ChatGPT, Gemini, Copilot, …)
 

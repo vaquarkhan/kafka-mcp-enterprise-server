@@ -1,8 +1,9 @@
-# Publishing to PyPI
+# Publishing to PyPI (Trusted Publishing)
 
 Package name: **`kafka-mcp-enterprise-kip1318`**  
 Import name: **`kafka_mcp`**  
-Console script: **`kafka-mcp-enterprise`**
+Console script: **`kafka-mcp-enterprise`**  
+Workflow: [`.github/workflows/publish.yml`](../.github/workflows/publish.yml) (same pattern as [mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness/blob/main/.github/workflows/publish.yml))
 
 This is a **community reference** for [KIP-1318](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka) / [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436). It is **not** the official Apache Kafka Java MCP module.
 
@@ -19,25 +20,76 @@ Optional OpenTelemetry APIs (not required):
 pip install kafka-mcp-enterprise-kip1318[otel]
 ```
 
-## Local build check
+---
+
+## Do you need Trusted Publishing?
+
+**Yes — use Trusted Publishing (OIDC).** Do **not** put a long-lived `PYPI_API_TOKEN` in repo secrets unless you have a special reason.
+
+Trusted Publishing is what `mcp-test-harness` uses: GitHub Actions gets a short-lived token from PyPI via OIDC (`permissions: id-token: write` + environment `pypi`).
+
+### One-time setup (you must click these — automation cannot)
+
+#### 1) GitHub Environment
+
+1. Open https://github.com/vaquarkhan/kafka-mcp-enterprise-server-kip-1318/settings/environments  
+2. **New environment** → name it exactly: **`pypi`**  
+3. Optional: add required reviewers / wait timer for safer releases.
+
+#### 2) PyPI Trusted Publisher
+
+1. Log in at https://pypi.org (create account if needed).  
+2. If the project does **not** exist yet: **Account settings → Publishing → Add a new pending publisher**.  
+   If it already exists: open the project → **Publishing** → add publisher.  
+3. Fill in **exactly**:
+
+| Field | Value |
+|-------|--------|
+| PyPI project name | `kafka-mcp-enterprise-kip1318` |
+| Owner | `vaquarkhan` |
+| Repository name | `kafka-mcp-enterprise-server-kip-1318` |
+| Workflow name | `publish.yml` |
+| Environment name | `pypi` |
+
+4. Save. Docs: https://docs.pypi.org/trusted-publishers/
+
+#### 3) Optional TestPyPI
+
+Repeat on https://test.pypi.org with environment `testpypi` only if you add a TestPyPI job later. Not required for the current workflow.
+
+### What you do **not** need
+
+- ❌ `PYPI_API_TOKEN` / `TWINE_PASSWORD` repo secrets (when Trusted Publishing is set up)  
+- ❌ Manual `twine upload` from a laptop for normal releases  
+
+---
+
+## Each release
+
+1. Bump `version` in `pyproject.toml` **and** `kafka_mcp/__init__.py` (keep them equal).  
+2. Commit and push to `main`.  
+3. Confirm **CI** is green (`.github/workflows/ci.yml`).  
+4. Tag and push:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+5. Watch **Actions → publish** — runs 72 tests, builds wheel/sdist, optional SBOM, then publishes via OIDC.  
+6. Verify: https://pypi.org/project/kafka-mcp-enterprise-kip1318/
+
+Tag must match a version you intend to publish; PyPI rejects re-uploading the same version.
+
+---
+
+## Local build check (optional)
 
 ```bash
 python -m pip install build twine
 python -m build
 python -m twine check dist/*
-pip install dist/*.whl
-echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise
 ```
-
-## Publish checklist
-
-1. Bump `version` in `pyproject.toml` and `kafka_mcp/__init__.py`.  
-2. `python run_tests.py` → **72/72**.  
-3. `python -m build` and `twine check dist/*`.  
-4. Create a PyPI account / API token.  
-5. Test upload (optional): `twine upload --repository testpypi dist/*`  
-6. Prod: `twine upload dist/*`  
-7. Verify: `pip install kafka-mcp-enterprise-kip1318==<version>` on a clean venv.
 
 ## What is **not** in the wheel
 
