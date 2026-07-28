@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">Kafka MCP Enterprise - what is included</title>
+  <desc id="desc">Simple product checklist of features in the Python package. Documentation image only, not a UI.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0f2926"/>
+    </linearGradient>
+    <style>
+      .t { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+      .mono { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="560" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1200" height="6" fill="#14b8a6"/>
+
+  <text x="64" y="64" class="t" fill="#f8fafc" font-size="28" font-weight="800">What this package includes</text>
+  <text x="64" y="98" class="t" fill="#94a3b8" font-size="15">kafka-mcp-enterprise-kip1318 - Python stdlib reference (documentation image, not an app UI)</text>
+
+  <!-- left column -->
+  <text x="64" y="160" class="t" fill="#5eead4" font-size="14" font-weight="700">SECURITY</text>
+  <text x="64" y="192" class="t" fill="#e2e8f0" font-size="16">- 9-step fail-closed pipeline</text>
+  <text x="64" y="222" class="t" fill="#e2e8f0" font-size="16">- DLP with 10 detectors (+ Luhn)</text>
+  <text x="64" y="252" class="t" fill="#e2e8f0" font-size="16">- Scopes, readonly, deny/allow lists</text>
+  <text x="64" y="282" class="t" fill="#e2e8f0" font-size="16">- HMAC approval tokens</text>
+  <text x="64" y="312" class="t" fill="#e2e8f0" font-size="16">- Taint / IFC (best-effort)</text>
+  <text x="64" y="342" class="t" fill="#e2e8f0" font-size="16">- Rate limits + circuit breakers</text>
+
+  <!-- right column -->
+  <text x="620" y="160" class="t" fill="#5eead4" font-size="14" font-weight="700">MCP + KAFKA SURFACE</text>
+  <text x="620" y="192" class="t" fill="#e2e8f0" font-size="16">- 11 MCP tools (read / mutate / destructive)</text>
+  <text x="620" y="222" class="t" fill="#e2e8f0" font-size="16">- kafka:// resources (topics, cluster, health)</text>
+  <text x="620" y="252" class="t" fill="#e2e8f0" font-size="16">- Direct Partition Assignment</text>
+  <text x="620" y="282" class="t" fill="#e2e8f0" font-size="16">- 15 error codes, 32 config fields</text>
+  <text x="620" y="312" class="t" fill="#e2e8f0" font-size="16">- 85/85 conformance tests, 6 examples</text>
+  <text x="620" y="342" class="t" fill="#e2e8f0" font-size="16">- 18 modules under kafka_mcp/</text>
+
+  <!-- how it runs -->
+  <rect x="64" y="390" width="1072" height="110" rx="12" fill="#020617" stroke="#334155"/>
+  <text x="88" y="430" class="t" fill="#fbbf24" font-size="14" font-weight="700">HOW IT RUNS</text>
+  <text x="88" y="462" class="mono" fill="#e2e8f0" font-size="16">Agent / IDE  --stdio JSON-RPC--&gt;  kafka-mcp-enterprise  --&gt;  Kafka (ACLs authoritative)</text>
+  <text x="88" y="490" class="t" fill="#94a3b8" font-size="14">This repo is Python only. Java is the KIP production track (KAFKA-20436), not shipped here.</text>
+</svg>

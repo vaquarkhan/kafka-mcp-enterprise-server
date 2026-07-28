@@ -15,12 +15,15 @@ def serve_stdio(
 ) -> None:
     """Read newline-delimited JSON-RPC from stdin; write JSON responses.
 
-    HTTP transport notes (not implemented in reference):
-    - Same JSON-RPC methods over POST /mcp
+    HTTP / Streamable HTTP transport (not implemented in this reference):
+    - Same JSON-RPC methods over POST (stateless preferred)
     - Bearer validation via auth.validate_bearer when audience/issuer configured
-    - Stateless: no sticky sessions required; approval tokens are self-contained
+    - Approval tokens are HMAC self-contained; rate/breaker/quarantine remain
+      per-process unless a shared store is added (see resilience.py)
     """
     session = session if session is not None else {}
+    # Authoritative identity must come from the transport/session — never tool args.
+    session.setdefault("identity", "stdio-user")
     inp = stdin or sys.stdin
     out = stdout or sys.stdout
     for line in inp:

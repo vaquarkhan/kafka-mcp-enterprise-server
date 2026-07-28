@@ -12,7 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from kafka_mcp.config import Config  # noqa: E402
-from kafka_mcp.server import KafkaMcpServer  # noqa: E402
+from kafka_mcp.server import KafkaMcpServer, unwrap_tool_result  # noqa: E402
 
 
 def banner(title: str) -> None:
@@ -57,10 +57,17 @@ def rpc(
 
 def expect_ok(resp: Dict[str, Any], label: str) -> bool:
     ok = "result" in resp and "error" not in resp
+    if ok and isinstance(resp.get("result"), dict) and resp["result"].get("isError"):
+        ok = False
     print(f"  {'PASS' if ok else 'FAIL'}  {label}")
     if not ok:
         print(f"         {resp}")
     return ok
+
+
+def tool_result(resp: Dict[str, Any]) -> Any:
+    """Domain payload from tools/call (unwraps MCP content)."""
+    return unwrap_tool_result(resp.get("result"))
 
 
 def expect_code(resp: Dict[str, Any], code: int, label: str) -> bool:

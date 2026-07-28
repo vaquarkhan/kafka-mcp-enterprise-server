@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -12,7 +13,9 @@ if str(_ROOT) not in sys.path:
 
 from kafka_mcp.approval import mint, mint_expired  # noqa: F401,E402
 from kafka_mcp.config import Config  # noqa: E402
-from kafka_mcp.server import KafkaMcpServer  # noqa: E402
+from kafka_mcp.server import KafkaMcpServer, unwrap_tool_result  # noqa: E402
+
+TEST_APPROVAL_SECRET = b"test-approval-key"
 
 
 class Checker:
@@ -37,7 +40,11 @@ class Checker:
 
 
 def new_server(**kwargs: Any) -> KafkaMcpServer:
-    cfg = Config(**kwargs) if kwargs else Config()
+    if "approval_signing_secret" not in kwargs:
+        kwargs["approval_signing_secret"] = TEST_APPROVAL_SECRET
+    # Quiet insecure-default warnings in the harness unless testing them.
+    logging.getLogger("kafka_mcp.server").setLevel(logging.ERROR)
+    cfg = Config(**kwargs)
     return KafkaMcpServer(cfg)
 
 
@@ -73,8 +80,28 @@ def err_code(resp: Dict) -> Optional[int]:
 
 
 def result(resp: Dict) -> Any:
-    return resp.get("result")
+    """Return domain payload (unwraps MCP content wrapper when present)."""
+    raw = resp.get("result")
+    return unwrap_tool_result(raw)
 
 
 def has_result(resp: Dict) -> bool:
-    return "result" in resp and "error" not in resp
+    if "error" in resp:
+        return False
+    if "result" not in resp:
+        return False
+    r = resp["result"]
+    if isinstance(r, dict) and r.get("isError") is True:
+        return False
+    return True
+
+
+def mcp_content_ok(resp: Dict) -> bool:
+    """True when tools/call result is MCP content-shaped and not isError."""
+    r = resp.get("result")
+    if not isinstance(r, dict):
+        return False
+    if r.get("isError"):
+        return False
+    content = r.get("content")
+    return isinstance(content, list) and len(content) >= 1

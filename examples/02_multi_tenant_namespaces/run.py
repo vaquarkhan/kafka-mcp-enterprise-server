@@ -27,6 +27,7 @@ from examples._common import (  # noqa: E402
 def team_server(prefix: str) -> KafkaMcpServer:
     return KafkaMcpServer(
         Config(
+        approval_signing_secret=b"example-approval-key",
             allowed_topic_prefixes=[prefix],
             tools_allowed=[
                 "list_topics",

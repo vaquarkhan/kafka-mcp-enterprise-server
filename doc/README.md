@@ -3,8 +3,8 @@
 End-to-end guide for the Kafka MCP reference server.
 
 1. [Getting started](getting-started.md) — run the server and call a tool  
-2. [Architecture](architecture.md) — components, consume paths, module isolation  
-3. [Security controls](security-controls.md) — fail-closed pipeline and data guards  
+2. [Architecture](architecture.md) — components, 3 Mermaid diagrams (client–host–server, topology, Direct Partition Assignment)  
+3. [Security controls](security-controls.md) — fail-closed pipeline + 2 Mermaid diagrams (evaluation order, data-to-tool defense)  
 4. [Configuration](configuration.md) — every config field  
 5. [Tools & resources](tools-and-resources.md) — MCP surface  
 6. [Error codes](error-codes.md) — operator / agent error map  
@@ -15,3 +15,11 @@ End-to-end guide for the Kafka MCP reference server.
 11. [Agents & skills](agents-and-skills.md) — Cursor, Kiro, ChatGPT, Gemini, Copilot  
 
 Hands-on scripts: [../examples/](../examples/README.md)
+
+## Product images
+
+![Product image](assets/kafka-mcp-banner.png)
+
+![What’s included](assets/kafka-mcp-features.png)
+
+These are documentation packaging images only — this package has no web UI. Sources: [`kafka-mcp-banner.svg`](assets/kafka-mcp-banner.svg), [`kafka-mcp-features.svg`](assets/kafka-mcp-features.svg). Architecture Mermaid diagrams: [architecture.md](architecture.md) · [security-controls.md](security-controls.md).

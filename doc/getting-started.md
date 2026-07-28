@@ -13,7 +13,7 @@ From the repository root:
 python run_tests.py
 ```
 
-Expect: `TOTAL: 72/72 passed, 0 failed`.
+Expect: `TOTAL: 85/85 passed, 0 failed`.
 
 ## Start over stdio (MCP host integration)
 

@@ -1,19 +1,52 @@
 # Architecture
 
-## Trust boundaries
+This Python package is the **KIP-1318 reference / validation** implementation (stdlib, in-memory Kafka). The KIP’s **production** recommendation remains **Java** (`tools/mcp-server` under [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)).
+
+Public docs include the **5** Mermaid diagrams from the KIP (architecture, client–host–server, Direct Partition Assignment here; security pipeline and data-to-tool defense in [security-controls.md](security-controls.md)).
+
+---
+
+## Diagram 1 — MCP client–host–server
+
+```mermaid
+sequenceDiagram
+  participant Agent as "Agent"
+  participant Host as "MCP Host"
+  participant Srv as "Kafka MCP Server"
+  participant Brokers as "Kafka Brokers"
+  Agent->>Host: "User / tool intent"
+  Host->>Srv: "JSON-RPC tools/call"
+  Srv->>Srv: "Security pipeline"
+  Srv->>Brokers: "ACL-checked Kafka API"
+  Brokers-->>Srv: "Result"
+  Srv-->>Host: "Scrubbed / audited result"
+  Host-->>Agent: "Context"
+```
+
+**What it shows:** Host mediates; server enforces the control pipeline; brokers authorize.  
+**Why it matters:** Clarifies trust boundaries for enterprise reviewers.
+
+---
+
+## Diagram 2 — Architecture (host → server → Kafka)
 
 ```mermaid
 flowchart LR
   subgraph Host["MCP Host"]
-    Agent["Agent / IDE"]
+    Client["MCP Client / Agent"]
   end
-  Srv["Kafka MCP Server"]
-  Kafka["Kafka cluster"]
-  Agent -->|"JSON-RPC"| Srv
-  Srv -->|"Admin / Produce / Consume"| Kafka
+  Server["Kafka MCP Server"]
+  Kafka["Apache Kafka Cluster"]
+  Client -->|"JSON-RPC tools/resources"| Server
+  Server -->|"Admin / Produce / Consume"| Kafka
 ```
 
+**What it shows:** Agent traffic terminates at the MCP server; Kafka remains the system of record.  
+**Why it matters:** Security and bounds are enforced at the MCP edge without replacing broker ACLs.
+
 The **host** mediates the agent. The **MCP server** applies policy, bounds, and scrubbing. **Broker ACLs** remain the authoritative authorization layer (optionally via identity propagation).
+
+---
 
 ## Package map
 
@@ -30,16 +63,32 @@ The **host** mediates the agent. The **MCP server** applies policy, bounds, and 
 | `tools.py` / `resources.py` | MCP tool registry + `kafka://` handlers |
 | `transport.py` | stdio NDJSON loop |
 
-## Direct Partition Assignment
+---
 
-Ephemeral agent peeks should **not** join a consumer group:
+## Diagram 5 — Direct Partition Assignment vs group path
+
+Ephemeral `consume_messages` **without** `groupId` uses Direct Partition Assignment: no group membership, **no rebalance**. With `groupId`, classic group consume applies.
+
+```mermaid
+flowchart TB
+  Start["consume_messages"]
+  Q{"groupId set?"}
+  Direct["Direct Partition Assignment<br/>assignment=direct<br/>no group / no rebalance"]
+  Group["Group consume<br/>assignment=group<br/>register + possible rebalance"]
+  Start --> Q
+  Q -->|"No"| Direct
+  Q -->|"Yes"| Group
+```
+
+**What it shows:** Two consume paths for agent vs long-lived group workloads.  
+**Why it matters:** Prevents ephemeral agent sessions from causing consumer-group storms.
 
 | Call | Behavior |
 |------|----------|
 | `consume_messages` without `groupId` | `assignment=direct`, **no group**, **no rebalance** |
 | `consume_messages` with `groupId` | Classic group path; rebalance counter increments |
 
-This avoids agent-driven rebalance storms on shared clusters.
+---
 
 ## Module isolation
 

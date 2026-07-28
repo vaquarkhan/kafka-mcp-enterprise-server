@@ -4,6 +4,10 @@
 [![Python](https://img.shields.io/pypi/pyversions/kafka-mcp-enterprise-kip1318.svg)](https://pypi.org/project/kafka-mcp-enterprise-kip1318/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
+![Kafka MCP Enterprise — product image](doc/assets/kafka-mcp-banner.png)
+
+*Product packaging image for the PyPI package (not a web UI).*
+
 ### PyPI
 
 ```bash
@@ -49,11 +53,17 @@ AI agents need governed Kafka access—not ad-hoc scripts, unbounded consumes, o
 
 Broker **ACLs remain authoritative**. Guardrails here *complement* them; they never replace them.
 
+### What’s included
+
+![Kafka MCP Enterprise — what’s included](doc/assets/kafka-mcp-features.png)
+
+*Documentation product image (not a web UI).* Checklist of what this Python stdio reference implements: fail-closed pipeline, DLP, 11 tools, `kafka://` resources, tests, and examples.
+
 ---
 
 ## Complete features, security controls & guardrails
 
-Nothing below is optional marketing — every item is implemented in `kafka_mcp/` and covered by the **72/72** conformance suite and/or demos/examples unless noted as a documented reference gap.
+Nothing below is optional marketing — every item is implemented in `kafka_mcp/` and covered by the **85/85** conformance suite and/or demos/examples unless noted as a documented reference gap.
 
 ### A. MCP protocol & surface
 
@@ -228,7 +238,7 @@ Full defaults: [doc/configuration.md](doc/configuration.md).
 
 | Feature | Detail |
 |---------|--------|
-| Conformance suite | **72/72** checks (functional, security, guardrails, mechanisms, resources, stdio) |
+| Conformance suite | **85/85** checks (functional, security, guardrails, mechanisms, resources, stdio, audit hardening) |
 | Smoke + demo | `test_kafka_mcp.py` (16), `demo_end_to_end.py` (22 steps, all security codes) |
 | Examples | Six folders with real-world `data/` fixtures |
 | PyPI | `kafka-mcp-enterprise-kip1318` · CLI `kafka-mcp-enterprise` |
@@ -275,7 +285,7 @@ See the **PyPI** section at the top for `pip install`, or [doc/publishing.md](do
 
 ```text
 kafka_mcp/          # Reference server package (security pipeline + in-memory Kafka)
-tests/              # 72-check conformance suite
+tests/              # 85-check conformance suite
 doc/                # Public documentation
 examples/           # Production-shaped scenarios
 serve_stdio.py      # stdio entrypoint

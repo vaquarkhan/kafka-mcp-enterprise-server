@@ -125,9 +125,28 @@ class Dlp:
         self,
         mode: str = "redact",
         block_categories: Optional[List[str]] = None,
+        *,
+        redact_ipv4: bool = False,
     ) -> None:
         self.mode = mode or "redact"
         self.block_categories = set(block_categories or [])
+        self.redact_ipv4 = bool(redact_ipv4)
+
+    def _active_categories(self) -> List[str]:
+        cats = [
+            "private_key",
+            "jwt",
+            "aws_access_key",
+            "secret_assignment",
+            "iban",
+            "email",
+            "ssn",
+            "credit_card",
+            "phone",
+        ]
+        if self.redact_ipv4:
+            cats.append("ipv4")
+        return cats
 
     def process(self, text: str) -> Tuple[str, Set[str], bool]:
         """Return (redacted_text, hits, blocked).
@@ -136,9 +155,42 @@ class Dlp:
         """
         if self.mode == "off" or text is None:
             return text if text is not None else "", set(), False
-        hits = scan(text)
+        active = set(self._active_categories())
+        hits = scan(text) & active
         blocked = bool(hits & self.block_categories) or (
             self.mode == "block" and bool(hits)
         )
-        redacted = redact(text) if self.mode in ("redact", "block") else text
+        if self.mode in ("redact", "block"):
+            redacted = self._redact_active(text, active)
+        else:
+            redacted = text
         return redacted, hits, blocked
+
+    def _redact_active(self, text: str, active: Set[str]) -> str:
+        out = text
+        order = [
+            "private_key",
+            "jwt",
+            "aws_access_key",
+            "secret_assignment",
+            "iban",
+            "email",
+            "ssn",
+            "credit_card",
+            "phone",
+            "ipv4",
+        ]
+        for cat in order:
+            if cat not in active:
+                continue
+            pat, mask = DETECTORS[cat]
+            if cat == "credit_card":
+
+                def _sub_card(m: re.Match) -> str:
+                    digits = re.sub(r"\D", "", m.group(0))
+                    return mask if _luhn_ok(digits) else m.group(0)
+
+                out = pat.sub(_sub_card, out)
+            else:
+                out = pat.sub(mask, out)
+        return out

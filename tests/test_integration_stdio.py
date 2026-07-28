@@ -108,7 +108,7 @@ from kafka_mcp.server import KafkaMcpServer
 from kafka_mcp.transport import serve_stdio
 from kafka_mcp.approval import mint
 
-cfg = Config(allowed_topic_prefixes=["agent."])
+cfg = Config(allowed_topic_prefixes=["agent."], approval_signing_secret=b"test-approval-key")
 server = KafkaMcpServer(cfg)
 # Pre-create out-of-scope topic for delete attempt
 server.backend.create_topic("prod.out-of-scope")
@@ -119,7 +119,7 @@ for req in reqs:
     if req.get("id") == 7:
         tok = mint(cfg.approval_signing_secret, "delete_topic")
         req["params"]["arguments"]["_approval_token"] = tok
-session = {}
+session = {"identity": "stdio-integration"}
 for req in reqs:
     resp = server.handle(req, session)
     if resp is not None:
@@ -155,10 +155,19 @@ for req in reqs:
         str(by_id.get(3)),
     )
     c.check("stdio: produce ok", "result" in by_id.get(4, {}), str(by_id.get(4)))
-    recs = (((by_id.get(5) or {}).get("result") or {}).get("records") or [])
+    from kafka_mcp.server import unwrap_tool_result
+
+    consume_domain = unwrap_tool_result((by_id.get(5) or {}).get("result"))
+    recs = (consume_domain or {}).get("records") or [] if isinstance(consume_domain, dict) else []
     c.check(
         "stdio: consume returns the produced record",
-        any("hello-stdio" in str(x.get("value", "")) or "[REDACTED" in str(x.get("value", "")) or x.get("value") == "hello-stdio" for x in recs) or len(recs) >= 1,
+        any(
+            "hello-stdio" in str(x.get("value", ""))
+            or "[REDACTED" in str(x.get("value", ""))
+            or x.get("value") == "hello-stdio"
+            for x in recs
+        )
+        or len(recs) >= 1,
         str(by_id.get(5)),
     )
     c.check(

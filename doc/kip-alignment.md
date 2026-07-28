@@ -11,7 +11,7 @@ This matrix compares the **Python reference** in this repo to the KIP-1318 featu
 
 | KIP feature | Status | Evidence |
 |-------------|--------|----------|
-| JSON-RPC: initialize, tools/list, tools/call, resources/list, resources/read | ✅ | 72-check suite + stdio |
+| JSON-RPC: initialize, tools/list, tools/call, resources/list, resources/read | ✅ | 85-check suite + stdio |
 | 11 classified tools | ✅ | `tools.py` |
 | 9-step fail-closed pipeline | ✅ | `server.py` + `security.py` |
 | Topic/group prefix scope | ✅ | `-32041` tests |
@@ -37,7 +37,8 @@ This matrix compares the **Python reference** in this repo to the KIP-1318 featu
 
 | Item | Notes |
 |------|-------|
-| **HTTP transport** | Spec’d in KIP; reference ships **stdio** + HTTP *notes* only (no HTTP server). |
+| **HTTP / Streamable HTTP transport** | Spec’d in KIP; reference ships **stdio** + HTTP *notes* only (no HTTP server). |
+| **Shared rate/breaker/quarantine store** | Counters are **per-process** (see `resilience.py`). Multi-replica HTTP would need Redis/Kafka-backed state. |
 | **Secure-by-default `tools_allowed`** | KIP *recommends* read/non-destructive default. Config default remains `["*"]` for harness flexibility — **operators must tighten** (see `doc/configuration.md`). |
 | **Real Kafka brokers** | `InMemoryKafka` only — teaching/conformance, not a client. |
 | **`mcp.policy.engine.url`** | Callable hook in-process; no HTTP policy client. |
@@ -45,6 +46,20 @@ This matrix compares the **Python reference** in this repo to the KIP-1318 featu
 | **`dependency_timeout_ms`** | Config field present; reference failures are injected synchronously (no wall-clock timeout loop). |
 | **Extra approval tool names** | `delete_records`, `delete_acls`, … listed as approval-required names for forward-compat; not all are registered tools yet. |
 | **Production language** | KIP: **Java**. This repo: Python teaching reference. |
+
+## Audit hardening (this branch)
+
+| Item | Status |
+|------|--------|
+| MCP `content` / `isError` tool results | ✅ |
+| Real `inputSchema` per tool | ✅ |
+| Fixed `protocolVersion` negotiation | ✅ |
+| No default approval secret | ✅ |
+| Approval resource/principal/nonce binding | ✅ |
+| Reject `_identity` from tool args | ✅ |
+| Taint on mutate + destructive; min-length match | ✅ |
+| `create_acls` prefix scope on bindings | ✅ |
+| Payload-scoped DLP; IPv4 opt-in | ✅ |
 
 ## Examples coverage
 
