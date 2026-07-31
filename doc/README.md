@@ -10,7 +10,7 @@ End-to-end guide for the Kafka MCP reference server.
 6. [Error codes](error-codes.md) — operator / agent error map  
 7. [Testing](testing.md) — conformance suite  
 8. [KIP-1318 alignment](kip-alignment.md) — feature matrix + intentional gaps  
-9. [Publishing to PyPI](publishing.md) — `kafka-mcp-enterprise-kip1318`  
+9. [Publishing to PyPI](publishing.md) — `kafka-mcp-enterprise`  
 10. [Observability / OpenTelemetry](observability.md) — optional, not required  
 11. [Agents & skills](agents-and-skills.md) — Cursor, Kiro, ChatGPT, Gemini, Copilot  
 

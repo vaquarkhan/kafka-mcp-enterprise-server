@@ -18,7 +18,7 @@
 ### Optional Python extra
 
 ```bash
-pip install kafka-mcp-enterprise-kip1318[otel]
+pip install kafka-mcp-enterprise[otel]
 ```
 
 ```python

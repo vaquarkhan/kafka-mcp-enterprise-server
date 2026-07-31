@@ -1,7 +1,7 @@
 ---
 name: kafka-mcp-enterprise
 description: >-
-  Guides work on the kafka-mcp-enterprise-kip1318 reference server (KIP-1318 /
+  Guides work on the kafka-mcp-enterprise reference server (KIP-1318 /
   KAFKA-20436): run tests, stdio MCP, security pipeline, examples, and PyPI
   packaging. Use when the user mentions Kafka MCP, KIP-1318, kafka_mcp,
   tools/call, DLP, approval tokens, or this repository.
@@ -11,7 +11,7 @@ description: >-
 
 ## Quick facts
 
-- Package: `kafka-mcp-enterprise-kip1318` · CLI: `kafka-mcp-enterprise` · import: `kafka_mcp`
+- Package: `kafka-mcp-enterprise` · CLI: `kafka-mcp-enterprise` · import: `kafka_mcp`
 - Official KIP/Jira: KIP-1318 / KAFKA-20436 (Java is production target)
 - This repo: Python stdlib reference + 72 conformance tests
 

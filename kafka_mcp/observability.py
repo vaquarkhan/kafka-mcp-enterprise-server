@@ -6,7 +6,7 @@ OpenTelemetry in the official module.
 
 Python users who want OTel can install the optional extra::
 
-    pip install kafka-mcp-enterprise-kip1318[otel]
+    pip install kafka-mcp-enterprise[otel]
 
 Then pass a custom tracer/meter into your host, or wrap ``KafkaMcpServer.handle``.
 This module never imports OpenTelemetry unless it is installed.

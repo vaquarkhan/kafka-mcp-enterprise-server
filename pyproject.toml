@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "kafka-mcp-enterprise-kip1318"
+name = "kafka-mcp-enterprise"
 version = "0.1.0"
 description = "Kafka MCP Enterprise reference server for KIP-1318 — fail-closed security controls, stdlib-only (conformance / teaching; not the official ASF Java module)."
 readme = "README.md"
@@ -50,11 +50,12 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka"
-Documentation = "https://issues.apache.org/jira/browse/KAFKA-20436"
+Homepage = "https://github.com/vaquarkhan/kafka-mcp-enterprise-server"
+Repository = "https://github.com/vaquarkhan/kafka-mcp-enterprise-server"
+Documentation = "https://github.com/vaquarkhan/kafka-mcp-enterprise-server#readme"
 "KIP-1318" = "https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka"
 "Jira KAFKA-20436" = "https://issues.apache.org/jira/browse/KAFKA-20436"
-"Bug Tracker" = "https://issues.apache.org/jira/browse/KAFKA-20436"
+"Bug Tracker" = "https://github.com/vaquarkhan/kafka-mcp-enterprise-server/issues"
 
 [project.scripts]
 kafka-mcp-enterprise = "kafka_mcp.cli:main_stdio"

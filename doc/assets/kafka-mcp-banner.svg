@@ -33,7 +33,7 @@
   <!-- install box -->
   <rect x="64" y="290" width="720" height="72" rx="12" fill="#020617" stroke="#334155"/>
   <text x="88" y="322" class="mono" fill="#64748b" font-size="14">$</text>
-  <text x="112" y="322" class="mono" fill="#5eead4" font-size="16">pip install kafka-mcp-enterprise-kip1318</text>
+  <text x="112" y="322" class="mono" fill="#5eead4" font-size="16">pip install kafka-mcp-enterprise</text>
   <text x="88" y="348" class="mono" fill="#94a3b8" font-size="14">CLI: kafka-mcp-enterprise</text>
 
   <rect x="820" y="290" width="316" height="72" rx="12" fill="#042f2e" stroke="#14b8a6"/>

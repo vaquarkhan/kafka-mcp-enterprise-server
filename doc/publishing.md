@@ -1,6 +1,6 @@
 # Publishing to PyPI (Trusted Publishing)
 
-Package name: **`kafka-mcp-enterprise-kip1318`**  
+Package name: **`kafka-mcp-enterprise`**  
 Import name: **`kafka_mcp`**  
 Console script: **`kafka-mcp-enterprise`**  
 Workflow: [`.github/workflows/publish.yml`](../.github/workflows/publish.yml) (same pattern as [mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness/blob/main/.github/workflows/publish.yml))
@@ -10,14 +10,14 @@ This is a **community reference** for [KIP-1318](https://cwiki.apache.org/conflu
 ## Install (after publish)
 
 ```bash
-pip install kafka-mcp-enterprise-kip1318
+pip install kafka-mcp-enterprise
 kafka-mcp-enterprise   # stdio MCP server
 ```
 
 Optional OpenTelemetry APIs (not required):
 
 ```bash
-pip install kafka-mcp-enterprise-kip1318[otel]
+pip install kafka-mcp-enterprise[otel]
 ```
 
 ---
@@ -32,7 +32,7 @@ Trusted Publishing is what `mcp-test-harness` uses: GitHub Actions gets a short-
 
 #### 1) GitHub Environment
 
-1. Open https://github.com/vaquarkhan/kafka-mcp-enterprise-server-kip-1318/settings/environments  
+1. Open https://github.com/vaquarkhan/kafka-mcp-enterprise-server/settings/environments  
 2. **New environment** → name it exactly: **`pypi`**  
 3. Optional: add required reviewers / wait timer for safer releases.
 
@@ -45,11 +45,11 @@ Trusted Publishing is what `mcp-test-harness` uses: GitHub Actions gets a short-
 
 | Field | Value |
 |-------|--------|
-| PyPI project name | `kafka-mcp-enterprise-kip1318` |
+| PyPI project name | `kafka-mcp-enterprise` |
 | Owner | `vaquarkhan` |
-| Repository name | `kafka-mcp-enterprise-server-kip-1318` |
+| Repository name | `kafka-mcp-enterprise-server` |
 | Workflow name | `publish.yml` |
-| Environment name | `pypi` |
+| Environment name | blank / **(any)** — or `pypi` if you pin it to the GitHub `pypi` environment |
 
 4. Save. Docs: https://docs.pypi.org/trusted-publishers/
 
@@ -76,25 +76,31 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-5. Watch **Actions → publish** — runs 72 tests, builds wheel/sdist, optional SBOM, then publishes via OIDC.  
-6. Verify: https://pypi.org/project/kafka-mcp-enterprise-kip1318/
+5. Watch **Actions → publish** — runs 85 tests, builds wheel/sdist, optional SBOM, then publishes via OIDC.  
+6. Verify: https://pypi.org/project/kafka-mcp-enterprise/
 
 Tag must match a version you intend to publish; PyPI rejects re-uploading the same version.
 
-### Troubleshooting: `400 Non-user identities cannot create new projects`
-
-Trusted Publishing worked, but the **pending publisher project name** did not match `pyproject.toml` `[project].name`.
-
-1. PyPI → Account → **Publishing** → edit/recreate the pending publisher.  
-2. **PyPI project name must be exactly:** `kafka-mcp-enterprise-kip1318` (hyphens, not underscores).  
-3. Re-run: Actions → **publish** → **Re-run failed jobs**, or:
+Or republish the current `main` tip without a new tag:
 
 ```bash
-gh workflow run publish.yml
-# or re-push the tag after deleting it locally/remotely (only if needed)
+gh workflow run publish.yml -f confirm=publish
 ```
 
-Do **not** change the package name in git unless you intentionally want a different PyPI name.
+### Troubleshooting: `400 Non-user identities cannot create new projects`
+
+Trusted Publishing worked, but the **pending publisher project name** did not match `pyproject.toml` `[project].name`, or the **GitHub repository** field did not match the renamed repo.
+
+Live Trusted Publisher must be:
+
+| Field | Value |
+|-------|--------|
+| PyPI project name | `kafka-mcp-enterprise` |
+| Repository | `vaquarkhan/kafka-mcp-enterprise-server` |
+| Workflow | `publish.yml` |
+
+1. PyPI → project (or Account → **Publishing**) → edit/recreate the publisher.  
+2. Re-run: Actions → **publish** → **Re-run failed jobs**, or `gh workflow run publish.yml -f confirm=publish`.
 
 ---
 

@@ -1,7 +1,7 @@
 # Kafka MCP Enterprise Server
 
-[![PyPI](https://img.shields.io/pypi/v/kafka-mcp-enterprise-kip1318.svg)](https://pypi.org/project/kafka-mcp-enterprise-kip1318/)
-[![Python](https://img.shields.io/pypi/pyversions/kafka-mcp-enterprise-kip1318.svg)](https://pypi.org/project/kafka-mcp-enterprise-kip1318/)
+[![PyPI](https://img.shields.io/pypi/v/kafka-mcp-enterprise.svg)](https://pypi.org/project/kafka-mcp-enterprise/)
+[![Python](https://img.shields.io/pypi/pyversions/kafka-mcp-enterprise.svg)](https://pypi.org/project/kafka-mcp-enterprise/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 ![Kafka MCP Enterprise — product image](doc/assets/kafka-mcp-banner.png)
@@ -11,16 +11,16 @@
 ### PyPI
 
 ```bash
-pip install kafka-mcp-enterprise-kip1318
+pip install kafka-mcp-enterprise
 echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise
 ```
 
 | | |
 |---|---|
-| **Package** | [`kafka-mcp-enterprise-kip1318`](https://pypi.org/project/kafka-mcp-enterprise-kip1318/) |
+| **Package** | [`kafka-mcp-enterprise`](https://pypi.org/project/kafka-mcp-enterprise/) |
 | **CLI** | `kafka-mcp-enterprise` |
 | **Import** | `import kafka_mcp` |
-| **Optional** | `pip install kafka-mcp-enterprise-kip1318[otel]` |
+| **Optional** | `pip install kafka-mcp-enterprise[otel]` |
 | **Publish** | Tag `v*` → [`.github/workflows/publish.yml`](.github/workflows/publish.yml) (Trusted Publishing / OIDC — see [doc/publishing.md](doc/publishing.md)) |
 
 ### Agents & skills (Cursor, Kiro, ChatGPT, Gemini, Copilot, …)
@@ -58,6 +58,30 @@ Broker **ACLs remain authoritative**. Guardrails here *complement* them; they ne
 ![Kafka MCP Enterprise — what’s included](doc/assets/kafka-mcp-features.png)
 
 *Documentation product image (not a web UI).* Checklist of what this Python stdio reference implements: fail-closed pipeline, DLP, 11 tools, `kafka://` resources, tests, and examples.
+
+### How it runs
+
+```mermaid
+flowchart LR
+  Agent["Agent / IDE"]
+  MCP["kafka-mcp-enterprise<br/>stdio JSON-RPC + pipeline"]
+  Kafka["Kafka<br/>ACLs authoritative"]
+  Agent -->|"MCP tools/call"| MCP
+  MCP -->|"Admin / Produce / Consume"| Kafka
+```
+
+**This repo:** Python stdlib reference (in-memory Kafka for tests). **KIP production track:** Java (`tools/mcp-server` / [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)), not shipped here.
+
+### Fail-closed pipeline (overview)
+
+```mermaid
+flowchart TB
+  A["1 Auth"] --> B["2 Deny-list"] --> C["3 Allow / readonly"]
+  C --> D["4 Scope"] --> E["5 Policy"] --> F["6 Taint / IFC"]
+  F --> G["7 Approval"] --> H["8 Rate limit"] --> I["9 Breaker execute"]
+```
+
+Full detail: [doc/security-controls.md](doc/security-controls.md) · architecture: [doc/architecture.md](doc/architecture.md).
 
 ---
 
@@ -241,7 +265,7 @@ Full defaults: [doc/configuration.md](doc/configuration.md).
 | Conformance suite | **85/85** checks (functional, security, guardrails, mechanisms, resources, stdio, audit hardening) |
 | Smoke + demo | `test_kafka_mcp.py` (16), `demo_end_to_end.py` (22 steps, all security codes) |
 | Examples | Six folders with real-world `data/` fixtures |
-| PyPI | `kafka-mcp-enterprise-kip1318` · CLI `kafka-mcp-enterprise` |
+| PyPI | `kafka-mcp-enterprise` · CLI `kafka-mcp-enterprise` |
 | Stdlib-only core | No hard third-party deps |
 | Optional OTel | `pip install …[otel]` — not required ([doc/observability.md](doc/observability.md)) |
 | AGENTS.md + skills | Cursor / Kiro / Copilot / ChatGPT / Gemini ([doc/agents-and-skills.md](doc/agents-and-skills.md)) |
@@ -274,7 +298,7 @@ See the **PyPI** section at the top for `pip install`, or [doc/publishing.md](do
 |----------|-------------|
 | **[doc/](doc/README.md)** | End-to-end guides: getting started, architecture, security, config, tools, errors, testing |
 | **[doc/kip-alignment.md](doc/kip-alignment.md)** | Feature matrix vs KIP-1318 — what is implemented vs intentional reference gaps |
-| **[doc/publishing.md](doc/publishing.md)** | PyPI package `kafka-mcp-enterprise-kip1318` |
+| **[doc/publishing.md](doc/publishing.md)** | PyPI package `kafka-mcp-enterprise` |
 | **[doc/observability.md](doc/observability.md)** | OpenTelemetry: optional, not required |
 | **[doc/agents-and-skills.md](doc/agents-and-skills.md)** | AGENTS.md + skills for all IDEs |
 | **[examples/](examples/README.md)** | Six folder-based scenarios (`run.py` + real-world `data/` fixtures) |
@@ -283,14 +307,19 @@ See the **PyPI** section at the top for `pip install`, or [doc/publishing.md](do
 
 ## Repository layout
 
-```text
-kafka_mcp/          # Reference server package (security pipeline + in-memory Kafka)
-tests/              # 85-check conformance suite
-doc/                # Public documentation
-examples/           # Production-shaped scenarios
-serve_stdio.py      # stdio entrypoint
-run_tests.py        # Master test runner
-demo_end_to_end.py  # 22-step control demo
+```mermaid
+flowchart TB
+  root["kafka-mcp-enterprise-server"]
+  pkg["kafka_mcp/<br/>reference server"]
+  tests["tests/<br/>85-check suite"]
+  docs["doc/<br/>guides + diagrams"]
+  ex["examples/<br/>6 scenarios"]
+  entry["serve_stdio.py · run_tests.py · demo_end_to_end.py"]
+  root --> pkg
+  root --> tests
+  root --> docs
+  root --> ex
+  root --> entry
 ```
 
 ---

@@ -1,24 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
   <title id="title">Kafka MCP Enterprise - what is included</title>
-  <desc id="desc">Simple product checklist of features in the Python package. Documentation image only, not a UI.</desc>
+  <desc id="desc">Simple product checklist and architecture flow for the Python package. Documentation image only, not a UI.</desc>
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0f172a"/>
       <stop offset="100%" stop-color="#0f2926"/>
     </linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#14b8a6"/>
+    </marker>
     <style>
       .t { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
       .mono { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
     </style>
   </defs>
 
-  <rect width="1200" height="560" fill="url(#bg)"/>
+  <rect width="1200" height="620" fill="url(#bg)"/>
   <rect x="0" y="0" width="1200" height="6" fill="#14b8a6"/>
 
   <text x="64" y="64" class="t" fill="#f8fafc" font-size="28" font-weight="800">What this package includes</text>
-  <text x="64" y="98" class="t" fill="#94a3b8" font-size="15">kafka-mcp-enterprise-kip1318 - Python stdlib reference (documentation image, not an app UI)</text>
+  <text x="64" y="98" class="t" fill="#94a3b8" font-size="15">kafka-mcp-enterprise - Python stdlib reference (documentation image, not an app UI)</text>
 
-  <!-- left column -->
   <text x="64" y="160" class="t" fill="#5eead4" font-size="14" font-weight="700">SECURITY</text>
   <text x="64" y="192" class="t" fill="#e2e8f0" font-size="16">- 9-step fail-closed pipeline</text>
   <text x="64" y="222" class="t" fill="#e2e8f0" font-size="16">- DLP with 10 detectors (+ Luhn)</text>
@@ -27,18 +29,38 @@
   <text x="64" y="312" class="t" fill="#e2e8f0" font-size="16">- Taint / IFC (best-effort)</text>
   <text x="64" y="342" class="t" fill="#e2e8f0" font-size="16">- Rate limits + circuit breakers</text>
 
-  <!-- right column -->
   <text x="620" y="160" class="t" fill="#5eead4" font-size="14" font-weight="700">MCP + KAFKA SURFACE</text>
   <text x="620" y="192" class="t" fill="#e2e8f0" font-size="16">- 11 MCP tools (read / mutate / destructive)</text>
   <text x="620" y="222" class="t" fill="#e2e8f0" font-size="16">- kafka:// resources (topics, cluster, health)</text>
   <text x="620" y="252" class="t" fill="#e2e8f0" font-size="16">- Direct Partition Assignment</text>
-  <text x="620" y="282" class="t" fill="#e2e8f0" font-size="16">- 15 error codes, 32 config fields</text>
+  <text x="620" y="282" class="t" fill="#e2e8f0" font-size="16">- 15 error codes, config fields</text>
   <text x="620" y="312" class="t" fill="#e2e8f0" font-size="16">- 85/85 conformance tests, 6 examples</text>
   <text x="620" y="342" class="t" fill="#e2e8f0" font-size="16">- 18 modules under kafka_mcp/</text>
 
-  <!-- how it runs -->
-  <rect x="64" y="390" width="1072" height="110" rx="12" fill="#020617" stroke="#334155"/>
-  <text x="88" y="430" class="t" fill="#fbbf24" font-size="14" font-weight="700">HOW IT RUNS</text>
-  <text x="88" y="462" class="mono" fill="#e2e8f0" font-size="16">Agent / IDE  --stdio JSON-RPC--&gt;  kafka-mcp-enterprise  --&gt;  Kafka (ACLs authoritative)</text>
-  <text x="88" y="490" class="t" fill="#94a3b8" font-size="14">This repo is Python only. Java is the KIP production track (KAFKA-20436), not shipped here.</text>
+  <!-- HOW IT RUNS - visual boxes, not ASCII arrows -->
+  <rect x="64" y="380" width="1072" height="190" rx="12" fill="#020617" stroke="#334155"/>
+  <text x="88" y="418" class="t" fill="#fbbf24" font-size="14" font-weight="700">HOW IT RUNS</text>
+
+  <rect x="88" y="440" width="220" height="72" rx="10" fill="#1e293b" stroke="#475569"/>
+  <text x="198" y="470" text-anchor="middle" class="t" fill="#f8fafc" font-size="16" font-weight="700">Agent / IDE</text>
+  <text x="198" y="494" text-anchor="middle" class="t" fill="#94a3b8" font-size="12">Cursor, Claude, Copilot...</text>
+
+  <line x1="318" y1="476" x2="368" y2="476" stroke="#14b8a6" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="343" y="466" text-anchor="middle" class="mono" fill="#5eead4" font-size="10">stdio</text>
+
+  <rect x="380" y="440" width="280" height="72" rx="10" fill="#134e4a" stroke="#14b8a6" stroke-width="2"/>
+  <text x="520" y="470" text-anchor="middle" class="t" fill="#ecfdf5" font-size="15" font-weight="700">kafka-mcp-enterprise</text>
+  <text x="520" y="494" text-anchor="middle" class="mono" fill="#99f6e4" font-size="11">JSON-RPC MCP + pipeline</text>
+
+  <line x1="670" y1="476" x2="720" y2="476" stroke="#14b8a6" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <rect x="732" y="440" width="240" height="72" rx="10" fill="#1e293b" stroke="#475569"/>
+  <text x="852" y="470" text-anchor="middle" class="t" fill="#f8fafc" font-size="16" font-weight="700">Kafka</text>
+  <text x="852" y="494" text-anchor="middle" class="t" fill="#94a3b8" font-size="12">ACLs authoritative</text>
+
+  <rect x="1000" y="452" width="112" height="48" rx="8" fill="#1c1917" stroke="#78716c" stroke-dasharray="4 3"/>
+  <text x="1056" y="472" text-anchor="middle" class="t" fill="#a8a29e" font-size="11">ref: in-mem</text>
+  <text x="1056" y="490" text-anchor="middle" class="t" fill="#a8a29e" font-size="11">prod: brokers</text>
+
+  <text x="88" y="548" class="t" fill="#94a3b8" font-size="13">This repo is Python only. Java is the KIP production track (KAFKA-20436), not shipped here.</text>
 </svg>

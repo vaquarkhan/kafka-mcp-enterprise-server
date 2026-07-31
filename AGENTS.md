@@ -5,7 +5,7 @@ Instructions for **any** coding agent (Cursor, Kiro, GitHub Copilot, ChatGPT/Cod
 ## What this repo is
 
 - **Python stdlib-only reference** for [KIP-1318](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka) / [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436).
-- PyPI: `kafka-mcp-enterprise-kip1318` · CLI: `kafka-mcp-enterprise` · import: `kafka_mcp`.
+- PyPI: `kafka-mcp-enterprise` · CLI: `kafka-mcp-enterprise` · import: `kafka_mcp`.
 - **Not** the official Apache Kafka Java MCP server. Production language in the KIP is **Java**.
 - In-memory Kafka backend for conformance — not a live broker client.
 
@@ -21,14 +21,15 @@ Instructions for **any** coding agent (Cursor, Kiro, GitHub Copilot, ChatGPT/Cod
 
 ## Layout
 
-```text
-kafka_mcp/     # server package
-tests/         # 72 conformance checks
-examples/0N_*/ # one folder per scenario (run.py + data/)
-doc/           # public docs
-AGENTS.md      # this file
-.cursor/skills/# Cursor skills
-skills/        # portable skills (any IDE / ChatGPT / Kiro)
+```mermaid
+flowchart TB
+  root["repo root"]
+  root --> pkg["kafka_mcp/"]
+  root --> tests["tests/ · 85 checks"]
+  root --> ex["examples/0N_*/"]
+  root --> docs["doc/"]
+  root --> agents["AGENTS.md"]
+  root --> skills[".cursor/skills/ + skills/"]
 ```
 
 ## Commands agents should run
@@ -52,7 +53,7 @@ echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | python serve_stdio.py
 | KIP gaps | `doc/kip-alignment.md` |
 | Add example | New `examples/0N_name/{README.md,run.py,data/}` using `examples/_common.py` |
 | Change pipeline | Update `server.py` / `security.py` / `guardrails.py` + matching tests |
-| Publish | `doc/publishing.md` — package name `kafka-mcp-enterprise-kip1318` |
+| Publish | `doc/publishing.md` — package name `kafka-mcp-enterprise` |
 
 ## Coding standards
 
