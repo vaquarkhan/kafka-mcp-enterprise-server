@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Blast-radius resilience — breakers + rogue quarantine with order fixtures."""
+"""Blast-radius resilience - breakers + rogue quarantine with order fixtures."""
 
 from __future__ import annotations
 
@@ -70,7 +70,7 @@ def main() -> None:
     print(f"  {'PASS' if data_ok else 'FAIL'}  data_plane breaker remains closed")
     ok &= data_ok
 
-    step(4, "Rogue agent bursts deletes — quarantined")
+    step(4, "Rogue agent bursts deletes - quarantined")
     server.backend._fail_module("control_plane", False)
     server.breakers["control_plane"].state = "closed"
     server.breakers["control_plane"].failures = 0

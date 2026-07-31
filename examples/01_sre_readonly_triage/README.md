@@ -1,4 +1,4 @@
-# 01 — SRE read-only triage
+# 01 - SRE read-only triage
 
 **Persona:** Night-shift SRE agent  
 **Goal:** Inspect production observability topics; never mutate Kafka.

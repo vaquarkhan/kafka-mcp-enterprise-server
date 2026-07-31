@@ -20,7 +20,7 @@ examples/0N_short_slug/
 ## Rules
 
 - Use `examples._common` helpers (`seed_topic_from_jsonl`, `expect_ok`, `expect_code`).
-- Seed from files — do not hardcode large payloads in `run.py`.
+- Seed from files - do not hardcode large payloads in `run.py`.
 - Print PASS/FAIL; `finish(ok)` for exit codes.
 - Update `examples/README.md` catalog.
 - Run the new example before finishing.

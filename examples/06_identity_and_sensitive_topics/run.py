@@ -80,7 +80,7 @@ def main() -> None:
         "CREATE denied via identity propagation",
     )
 
-    step(3, "Sensitive payroll consume without approval — blocked")
+    step(3, "Sensitive payroll consume without approval - blocked")
     ok &= expect_code(
         call(
             server,
@@ -92,7 +92,7 @@ def main() -> None:
         "sensitive topic needs approval",
     )
 
-    step(4, "Approved consume — SSN redacted in model-facing output")
+    step(4, "Approved consume - SSN redacted in model-facing output")
     token = mint(cfg.approval_signing_secret, "consume_messages")
     resp = call(
         server,

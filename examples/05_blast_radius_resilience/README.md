@@ -1,4 +1,4 @@
-# 05 — Blast-radius resilience
+# 05 - Blast-radius resilience
 
 **Persona:** Shared MCP gateway under partial outage + compromised agent  
 **Goal:** Control-plane breaker isolates admin failures; data plane keeps serving; rogue deletes quarantined.

@@ -6,7 +6,7 @@ Diagrams **3** (pipeline) and **4** (data-to-tool defense) live here. Diagrams *
 
 ---
 
-## Diagram 3 — Security control evaluation pipeline (fail-closed)
+## Diagram 3 - Security control evaluation pipeline (fail-closed)
 
 Every `tools/call` runs this order; **first denial wins**:
 
@@ -29,14 +29,14 @@ flowchart TB
 
 | Step | Control | Denial code |
 |------|---------|-------------|
-| 1 | Auth — bearer audience/issuer when configured | `-32001` |
+| 1 | Auth - bearer audience/issuer when configured | `-32001` |
 | 2 | Deny-list | `-32044` |
 | 3 | Allow-list / readonly (blocks writes incl. produce) | `-32044` |
 | 4 | Topic / group prefix scope | `-32041` |
-| 5 | Policy engine — fail-closed on deny or exception | `-32044` |
-| 6 | Taint / IFC — destructive; approval bypasses | `-32040` |
-| 7 | Approval — HMAC signed TTL token | `-32042` |
-| 8 | Rate limit — general vs admin buckets | `-32029` |
+| 5 | Policy engine - fail-closed on deny or exception | `-32044` |
+| 6 | Taint / IFC - destructive; approval bypasses | `-32040` |
+| 7 | Approval - HMAC signed TTL token | `-32042` |
+| 8 | Rate limit - general vs admin buckets | `-32029` |
 | 9 | Execute via per-module circuit breaker | `-32043` |
 
 Additional guards around execute:
@@ -49,7 +49,7 @@ Additional guards around execute:
 
 ---
 
-## Diagram 4 — Data-to-tool escalation defense
+## Diagram 4 - Data-to-tool escalation defense
 
 ```mermaid
 flowchart LR
@@ -73,8 +73,8 @@ In production, set `tools_allowed` to **read / non-destructive** tools only. Ena
 
 | Control | Reality |
 |---------|---------|
-| Taint / IFC | **Best-effort** — can be defeated by data laundering |
-| Broker ACLs | **Load-bearing** — least privilege at the cluster |
+| Taint / IFC | **Best-effort** - can be defeated by data laundering |
+| Broker ACLs | **Load-bearing** - least privilege at the cluster |
 | MCP guardrails | **Complement** broker authz; they do not replace it |
 | Audit hash chain | Tamper-**resistant** in-memory; export for true retention |
 | Language split | **Python** = this reference/validation package; **Java** = KIP production target |

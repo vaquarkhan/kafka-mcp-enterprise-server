@@ -3,14 +3,14 @@
 #
 # Trigger: git tag v*  (e.g. v0.1.0)
 #
-# One-time setup (you must do this — automation cannot):
+# One-time setup (you must do this - automation cannot):
 # 1) GitHub → Settings → Environments → create environment named exactly: pypi
 # 2) PyPI → Publishing → add Trusted Publisher (pending OK if project does not exist yet):
 #      PyPI project name:  kafka-mcp-enterprise
 #      Owner:              vaquarkhan
 #      Repository:         kafka-mcp-enterprise-server
 #      Workflow name:      publish.yml
-#      Environment name:   (blank / Any — matches workflow env pypi)
+#      Environment name:   (blank / Any - matches workflow env pypi)
 # 3) No PYPI_API_TOKEN secret needed when Trusted Publishing is configured.
 # Docs: https://docs.pypi.org/trusted-publishers/
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Support-copilot DLP — block secret egress; redact PII from case traffic."""
+"""Support-copilot DLP - block secret egress; redact PII from case traffic."""
 
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ def main() -> None:
     n = seed_topic_from_jsonl(
         server, "support.cases", data_dir(__file__) / "support_cases.jsonl"
     )
-    # seed_topic_from_jsonl creates if missing; topic already created — produce only happened
+    # seed_topic_from_jsonl creates if missing; topic already created - produce only happened
     print(f"         seeded {n} case records")
 
     step(2, "Produce allowed resolution event")
@@ -79,7 +79,7 @@ def main() -> None:
             f"blocked {item['label']}",
         )
 
-    step(4, "Consume — email/phone from fixture must be redacted")
+    step(4, "Consume - email/phone from fixture must be redacted")
     resp = call(
         server,
         "consume_messages",

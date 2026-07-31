@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kafka-mcp-enterprise"
 version = "0.1.0"
-description = "Kafka MCP Enterprise reference server for KIP-1318 — fail-closed security controls, stdlib-only (conformance / teaching; not the official ASF Java module)."
+description = "Kafka MCP Enterprise reference server for KIP-1318 - fail-closed security controls, stdlib-only (conformance / teaching; not the official ASF Java module)."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "Apache-2.0" }
@@ -35,7 +35,7 @@ classifiers = [
   "Topic :: System :: Distributed Computing",
   "Typing :: Typed",
 ]
-# Core stays stdlib-only — no hard runtime dependencies.
+# Core stays stdlib-only - no hard runtime dependencies.
 dependencies = []
 
 [project.optional-dependencies]

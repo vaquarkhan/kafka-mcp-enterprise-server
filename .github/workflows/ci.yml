@@ -1,4 +1,4 @@
-# CI — run on pushes/PRs to main (does not publish).
+# CI - run on pushes/PRs to main (does not publish).
 name: ci
 
 on:

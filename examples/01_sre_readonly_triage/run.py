@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Night-shift SRE triage — read-only agent against real observability events."""
+"""Night-shift SRE triage - read-only agent against real observability events."""
 
 from __future__ import annotations
 
@@ -65,7 +65,7 @@ def main() -> None:
         "describe_topic allowed",
     )
 
-    step(3, "Peek recent errors (direct assignment — no consumer group)")
+    step(3, "Peek recent errors (direct assignment - no consumer group)")
     resp = call(
         server,
         "consume_messages",
@@ -81,7 +81,7 @@ def main() -> None:
     if recs:
         print(f"         sample: {str(recs[0].get('value'))[:100]}…")
 
-    step(4, "Attempt produce — denied (readonly)")
+    step(4, "Attempt produce - denied (readonly)")
     ok &= expect_code(
         call(
             server,
@@ -93,7 +93,7 @@ def main() -> None:
         "produce blocked by readonly",
     )
 
-    step(5, "Attempt create_topic — denied")
+    step(5, "Attempt create_topic - denied")
     ok &= expect_code(
         call(server, "create_topic", {"name": "agent.observability.temp"}, session),
         -32044,

@@ -1,4 +1,4 @@
-"""Audit-hardening validation (protocol + security fixes A1–B8 / C)."""
+"""Audit-hardening validation (protocol + security fixes A1-B8 / C)."""
 
 from __future__ import annotations
 

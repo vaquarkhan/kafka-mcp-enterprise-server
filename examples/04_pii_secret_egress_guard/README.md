@@ -1,4 +1,4 @@
-# 04 — PII / secret egress guard
+# 04 - PII / secret egress guard
 
 **Persona:** Customer-support copilot  
 **Goal:** Allow normal case events; block secret egress; redact PII on consume.

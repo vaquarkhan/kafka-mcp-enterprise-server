@@ -1,6 +1,6 @@
 # Configuration
 
-`kafka_mcp.config.Config` — fields below. Pass into `KafkaMcpServer(Config(...))`.
+`kafka_mcp.config.Config` - fields below. Pass into `KafkaMcpServer(Config(...))`.
 
 | Field | Default | Purpose |
 |-------|---------|---------|

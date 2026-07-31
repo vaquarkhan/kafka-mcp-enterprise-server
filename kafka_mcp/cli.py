@@ -42,7 +42,7 @@ def main_stdio() -> None:
     cfg = _cfg_from_env()
     if not cfg.approval_signing_secret:
         logger.warning(
-            "MCP_APPROVAL_SIGNING_SECRET unset — approval-gated tools will deny all tokens"
+            "MCP_APPROVAL_SIGNING_SECRET unset - approval-gated tools will deny all tokens"
         )
     server = KafkaMcpServer(cfg)
     session = {"identity": os.environ.get("MCP_IDENTITY", "stdio-user")}

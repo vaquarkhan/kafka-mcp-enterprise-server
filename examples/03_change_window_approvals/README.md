@@ -1,4 +1,4 @@
-# 03 — Change-window approvals
+# 03 - Change-window approvals
 
 **Persona:** Platform engineer agent + human change approver  
 **Goal:** Destructive delete only with a signed approval tied to a change ticket.

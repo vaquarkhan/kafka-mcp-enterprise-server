@@ -33,7 +33,7 @@ class Checker:
             print(f"  PASS  {name}")
         else:
             self.failed += 1
-            msg = f"  FAIL  {name}" + (f" — {detail}" if detail else "")
+            msg = f"  FAIL  {name}" + (f" - {detail}" if detail else "")
             print(msg)
             self.failures.append(msg)
 

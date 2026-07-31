@@ -2,11 +2,11 @@
 
 This Python package is the **KIP-1318 reference / validation** implementation (stdlib, in-memory Kafka). The KIP’s **production** recommendation remains **Java** (`tools/mcp-server` under [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)).
 
-Public docs include the **5** Mermaid diagrams from the KIP (architecture, client–host–server, Direct Partition Assignment here; security pipeline and data-to-tool defense in [security-controls.md](security-controls.md)).
+Public docs include the **5** Mermaid diagrams from the KIP (architecture, client-host-server, Direct Partition Assignment here; security pipeline and data-to-tool defense in [security-controls.md](security-controls.md)).
 
 ---
 
-## Diagram 1 — MCP client–host–server
+## Diagram 1 - MCP client-host-server
 
 ```mermaid
 sequenceDiagram
@@ -28,7 +28,7 @@ sequenceDiagram
 
 ---
 
-## Diagram 2 — Architecture (host → server → Kafka)
+## Diagram 2 - Architecture (host → server → Kafka)
 
 ```mermaid
 flowchart LR
@@ -65,7 +65,7 @@ The **host** mediates the agent. The **MCP server** applies policy, bounds, and 
 
 ---
 
-## Diagram 5 — Direct Partition Assignment vs group path
+## Diagram 5 - Direct Partition Assignment vs group path
 
 Ephemeral `consume_messages` **without** `groupId` uses Direct Partition Assignment: no group membership, **no rebalance**. With `groupId`, classic group consume applies.
 

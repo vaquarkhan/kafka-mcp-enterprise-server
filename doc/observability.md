@@ -4,9 +4,9 @@
 
 | Context | Recommendation |
 |---------|----------------|
-| **This Python reference** | **No** — not required. Use audit trail + `kafka://health` + structured error codes. |
+| **This Python reference** | **No** - not required. Use audit trail + `kafka://health` + structured error codes. |
 | **Demos / CI / teaching** | Skip OTel; keep zero dependencies. |
-| **Production Java (KIP-1318 / KAFKA-20436)** | **Yes, recommended** — metrics/traces for tool latency, denials, breaker state, identity. |
+| **Production Java (KIP-1318 / KAFKA-20436)** | **Yes, recommended** - metrics/traces for tool latency, denials, breaker state, identity. |
 | **Python fork that fronts real Kafka** | Optional; add OTel at the host or wrap `handle()`. |
 
 ### Why not required here
@@ -30,4 +30,4 @@ with tracer.start_as_current_span("tools_call"):
     ...
 ```
 
-`get_tracer()` / `get_meter()` **no-op** when OpenTelemetry is not installed — safe defaults.
+`get_tracer()` / `get_meter()` **no-op** when OpenTelemetry is not installed - safe defaults.

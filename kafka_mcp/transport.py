@@ -22,7 +22,7 @@ def serve_stdio(
       per-process unless a shared store is added (see resilience.py)
     """
     session = session if session is not None else {}
-    # Authoritative identity must come from the transport/session — never tool args.
+    # Authoritative identity must come from the transport/session - never tool args.
     session.setdefault("identity", "stdio-user")
     inp = stdin or sys.stdin
     out = stdout or sys.stdout

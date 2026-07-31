@@ -1,4 +1,4 @@
-# 02 — Multi-tenant namespace isolation
+# 02 - Multi-tenant namespace isolation
 
 **Persona:** Payments agent vs inventory agent on a shared MCP gateway  
 **Goal:** Each team may only touch its topic prefix (`-32041` on cross-tenant access).

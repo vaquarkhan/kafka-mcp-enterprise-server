@@ -6,7 +6,7 @@ Portable instructions so Cursor, Kiro, GitHub Copilot, ChatGPT/Codex, Google Gem
 
 | File | Purpose |
 |------|---------|
-| [`AGENTS.md`](../AGENTS.md) | Canonical agent instructions — load this first |
+| [`AGENTS.md`](../AGENTS.md) | Canonical agent instructions - load this first |
 
 Most modern agent hosts auto-discover `AGENTS.md` at the repo root. If not, paste or `@`-mention it.
 

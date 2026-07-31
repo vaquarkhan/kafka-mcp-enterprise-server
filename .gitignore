@@ -25,6 +25,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Internal working notes / KIP drafts / rebuild guide — do not commit
+# Internal working notes / KIP drafts / rebuild guide - do not commit
 internal/
 CURSOR-BUILD-INSTRUCTIONS.md

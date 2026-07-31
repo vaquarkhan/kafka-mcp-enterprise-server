@@ -24,11 +24,11 @@ pip install kafka-mcp-enterprise[otel]
 
 ## Do you need Trusted Publishing?
 
-**Yes — use Trusted Publishing (OIDC).** Do **not** put a long-lived `PYPI_API_TOKEN` in repo secrets unless you have a special reason.
+**Yes - use Trusted Publishing (OIDC).** Do **not** put a long-lived `PYPI_API_TOKEN` in repo secrets unless you have a special reason.
 
 Trusted Publishing is what `mcp-test-harness` uses: GitHub Actions gets a short-lived token from PyPI via OIDC (`permissions: id-token: write` + environment `pypi`).
 
-### One-time setup (you must click these — automation cannot)
+### One-time setup (you must click these - automation cannot)
 
 #### 1) GitHub Environment
 
@@ -49,7 +49,7 @@ Trusted Publishing is what `mcp-test-harness` uses: GitHub Actions gets a short-
 | Owner | `vaquarkhan` |
 | Repository name | `kafka-mcp-enterprise-server` |
 | Workflow name | `publish.yml` |
-| Environment name | blank / **(any)** — or `pypi` if you pin it to the GitHub `pypi` environment |
+| Environment name | blank / **(any)** - or `pypi` if you pin it to the GitHub `pypi` environment |
 
 4. Save. Docs: https://docs.pypi.org/trusted-publishers/
 
@@ -76,7 +76,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-5. Watch **Actions → publish** — runs 85 tests, builds wheel/sdist, optional SBOM, then publishes via OIDC.  
+5. Watch **Actions → publish** - runs 85 tests, builds wheel/sdist, optional SBOM, then publishes via OIDC.  
 6. Verify: https://pypi.org/project/kafka-mcp-enterprise/
 
 Tag must match a version you intend to publish; PyPI rejects re-uploading the same version.
@@ -114,5 +114,5 @@ python -m twine check dist/*
 
 ## What is **not** in the wheel
 
-- `tests/`, `examples/`, `doc/`, `internal/` — clone the repo for those.  
-- Real Kafka brokers — in-memory backend only.
+- `tests/`, `examples/`, `doc/`, `internal/` - clone the repo for those.  
+- Real Kafka brokers - in-memory backend only.

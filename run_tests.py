@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Master test runner — expect TOTAL: 85/85 passed, 0 failed."""
+"""Master test runner - expect TOTAL: 85/85 passed, 0 failed."""
 
 from __future__ import annotations
 

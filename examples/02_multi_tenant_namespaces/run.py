@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Multi-tenant isolation — payments vs inventory namespaces with fixture data."""
+"""Multi-tenant isolation - payments vs inventory namespaces with fixture data."""
 
 from __future__ import annotations
 
@@ -76,7 +76,7 @@ def main() -> None:
         "payments consume own topic",
     )
 
-    step(2, "Payments tries inventory topic — SCOPE_VIOLATION")
+    step(2, "Payments tries inventory topic - SCOPE_VIOLATION")
     ok &= expect_code(
         call(
             payments,

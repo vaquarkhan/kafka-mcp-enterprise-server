@@ -39,8 +39,8 @@ This matrix compares the **Python reference** in this repo to the KIP-1318 featu
 |------|-------|
 | **HTTP / Streamable HTTP transport** | Spec’d in KIP; reference ships **stdio** + HTTP *notes* only (no HTTP server). |
 | **Shared rate/breaker/quarantine store** | Counters are **per-process** (see `resilience.py`). Multi-replica HTTP would need Redis/Kafka-backed state. |
-| **Secure-by-default `tools_allowed`** | KIP *recommends* read/non-destructive default. Config default remains `["*"]` for harness flexibility — **operators must tighten** (see `doc/configuration.md`). |
-| **Real Kafka brokers** | `InMemoryKafka` only — teaching/conformance, not a client. |
+| **Secure-by-default `tools_allowed`** | KIP *recommends* read/non-destructive default. Config default remains `["*"]` for harness flexibility - **operators must tighten** (see `doc/configuration.md`). |
+| **Real Kafka brokers** | `InMemoryKafka` only - teaching/conformance, not a client. |
 | **`mcp.policy.engine.url`** | Callable hook in-process; no HTTP policy client. |
 | **`audit_topic` publish** | Name configured; trail is in-memory (+ resource), not mirrored to a durable Kafka topic. |
 | **`dependency_timeout_ms`** | Config field present; reference failures are injected synchronously (no wall-clock timeout loop). |

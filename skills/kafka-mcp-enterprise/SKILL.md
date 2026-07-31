@@ -7,7 +7,7 @@ description: >-
   tools/call, DLP, approval tokens, or this repository.
 ---
 
-# Kafka MCP Enterprise — agent skill
+# Kafka MCP Enterprise - agent skill
 
 ## Quick facts
 

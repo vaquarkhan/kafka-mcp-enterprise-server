@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Change-window approvals — delete deprecated topics only with signed tokens."""
+"""Change-window approvals - delete deprecated topics only with signed tokens."""
 
 from __future__ import annotations
 
@@ -50,7 +50,7 @@ def main() -> None:
     print(f"         registered {len(deprecated)} deprecated topics")
 
     target = ticket["targetTopic"]
-    step(2, f"Delete {target} without token — APPROVAL_REQUIRED")
+    step(2, f"Delete {target} without token - APPROVAL_REQUIRED")
     ok &= expect_code(
         call(server, "delete_topic", {"name": target}, session),
         -32042,
@@ -69,7 +69,7 @@ def main() -> None:
         "forged token rejected",
     )
 
-    step(4, "Approver mints TTL token for change window — delete succeeds")
+    step(4, "Approver mints TTL token for change window - delete succeeds")
     token = mint(secret, "delete_topic", ttl=int(ticket["approvalTtlSeconds"]))
     print(f"         minted token for {ticket['changeTicket']}: {token[:36]}…")
     ok &= expect_ok(

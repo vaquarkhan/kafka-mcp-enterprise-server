@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""stdio entry point — thin wrapper around kafka_mcp.cli."""
+"""stdio entry point - thin wrapper around kafka_mcp.cli."""
 
 from kafka_mcp.cli import main_stdio
 

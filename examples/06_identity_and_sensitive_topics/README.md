@@ -1,4 +1,4 @@
-# 06 — Identity propagation + sensitive topics
+# 06 - Identity propagation + sensitive topics
 
 **Persona:** Least-privilege reader + security officer approvals  
 **Goal:** Propagated ACLs deny CREATE; sensitive payroll consume requires approval; DLP still redacts SSN on read.

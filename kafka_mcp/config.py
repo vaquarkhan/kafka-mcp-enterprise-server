@@ -44,7 +44,7 @@ class Config:
     rate_admin_requests_per_second: int = 20
     oauth_expected_audience: Optional[str] = None
     oauth_expected_issuer: Optional[str] = None
-    # B1: no hardcoded default — must be set via Config/env for mint/verify to succeed.
+    # B1: no hardcoded default - must be set via Config/env for mint/verify to succeed.
     approval_signing_secret: Optional[bytes] = None
     redaction_enabled: bool = True
     dlp_mode: str = "redact"  # redact | block | off

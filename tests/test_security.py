@@ -42,7 +42,7 @@ def run() -> Checker:
     s = new_server(allowed_topic_prefixes=["agent."])
     call(s, "create_topic", {"name": "agent.d"})
     r = call(s, "delete_topic", {"name": "prod.ledger", "_approval_token": mint(s.cfg.approval_signing_secret, "delete_topic")})
-    # out of scope before approval matters — create prod via backend then delete
+    # out of scope before approval matters - create prod via backend then delete
     s.backend.create_topic("prod.ledger")
     r = call(
         s,

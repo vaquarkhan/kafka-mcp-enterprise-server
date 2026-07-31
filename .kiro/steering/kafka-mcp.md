@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Kiro steering — Kafka MCP Enterprise (KIP-1318)
+# Kiro steering - Kafka MCP Enterprise (KIP-1318)
 
 Always follow the repository root **`AGENTS.md`**.
 

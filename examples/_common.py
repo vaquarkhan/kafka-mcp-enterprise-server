@@ -84,7 +84,7 @@ def finish(ok: bool) -> None:
     if ok:
         print("Example completed successfully.")
         sys.exit(0)
-    print("Example failed — see FAIL lines above.")
+    print("Example failed - see FAIL lines above.")
     sys.exit(1)
 
 

@@ -14,7 +14,7 @@ python run_tests.py
 | `tests/test_report_mechanisms.py` | KIP mechanisms | 13 |
 | `tests/test_resources.py` | `kafka://` resources | 6 |
 | `tests/test_integration_stdio.py` | stdio subprocess | 8 |
-| `tests/test_audit_hardening.py` | Protocol + audit fixes (A1–B8/C) | 13 |
+| `tests/test_audit_hardening.py` | Protocol + audit fixes (A1-B8/C) | 13 |
 
 **Total = 85.** Expect: `TOTAL: 85/85 passed, 0 failed`.
 

@@ -194,7 +194,7 @@ def _truncate(obj: Any, max_bytes: int) -> Any:
         out["truncated"] = True
         out["_truncation"] = "max_output_bytes"
         return out
-    # C4: preserve top-level shape — attach preview sibling instead of replacing object
+    # C4: preserve top-level shape - attach preview sibling instead of replacing object
     if isinstance(obj, dict):
         enc = raw.encode("utf-8")[: max(0, max_bytes - 128)]
         text = enc.decode("utf-8", errors="ignore")

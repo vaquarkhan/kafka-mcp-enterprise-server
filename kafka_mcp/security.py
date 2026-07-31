@@ -213,7 +213,7 @@ class SecurityPipeline:
             if not ok:
                 raise McpError(POLICY_DENIED, "policy engine denied")
 
-        # 6) taint guard — mutate + destructive (approval bypasses)
+        # 6) taint guard - mutate + destructive (approval bypasses)
         if (
             cfg.taint_guard_enabled
             and kind in ("destructive", "mutate")

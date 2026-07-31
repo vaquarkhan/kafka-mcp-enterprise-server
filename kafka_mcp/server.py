@@ -31,7 +31,7 @@ logger = logging.getLogger("kafka_mcp.server")
 
 
 def wrap_tool_result(domain: Any, *, is_error: bool = False) -> Dict[str, Any]:
-    """A1: MCP tools/call result shape — content blocks + isError."""
+    """A1: MCP tools/call result shape - content blocks + isError."""
     if isinstance(domain, str):
         text = domain
     else:
@@ -347,7 +347,7 @@ class KafkaMcpServer:
             result = dict(result)
             result["records"] = scrubbed_records
             result = self._clamp_consume_bytes(result, self.cfg.hard_max_bytes)
-            # Taint message payloads only (not the topic name arg — avoids false positives
+            # Taint message payloads only (not the topic name arg - avoids false positives
             # on later mutate tools that reuse the same topic identifier).
             for rec in result.get("records") or []:
                 if rec.get("value"):

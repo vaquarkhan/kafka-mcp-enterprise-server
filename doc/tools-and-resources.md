@@ -4,17 +4,17 @@
 
 | Tool | kind | module | Kafka op | Resource arg |
 |------|------|--------|----------|--------------|
-| `list_topics` | read | control_plane | DESCRIBE | — |
+| `list_topics` | read | control_plane | DESCRIBE | - |
 | `describe_topic` | read | control_plane | DESCRIBE | `name` |
-| `describe_cluster` | read | control_plane | DESCRIBE | — |
-| `list_consumer_groups` | read | control_plane | DESCRIBE | — |
+| `describe_cluster` | read | control_plane | DESCRIBE | - |
+| `list_consumer_groups` | read | control_plane | DESCRIBE | - |
 | `describe_consumer_group` | read | control_plane | DESCRIBE | `groupId` |
 | `consume_messages` | read | data_plane | READ | `topic` |
 | `create_topic` | mutate | control_plane | CREATE | `name` |
 | `alter_topic_config` | mutate | control_plane | ALTER | `name` |
 | `produce_message` | mutate | data_plane | WRITE | `topic` |
 | `delete_topic` | destructive | control_plane | DELETE | `name` |
-| `create_acls` | destructive | control_plane | ALTER | — |
+| `create_acls` | destructive | control_plane | ALTER | - |
 
 ### Common arguments
 

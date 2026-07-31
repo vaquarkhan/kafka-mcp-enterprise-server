@@ -1,4 +1,4 @@
-"""Observability hooks (OpenTelemetry optional — not required).
+"""Observability hooks (OpenTelemetry optional - not required).
 
 The reference server stays **stdlib-only**. Audit + ``kafka://health`` cover
 local demos. For production Java (KIP-1318 / KAFKA-20436), prefer first-class
