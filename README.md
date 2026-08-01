@@ -6,10 +6,6 @@
 
 > **Scope:** This is a **stdio, in-memory conformance reference** for the [KIP-1318](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka) **security control model**. Real brokers, Streamable HTTP, OAuth 2.1, EOS/fencing, Connect tooling, distributed rate/breaker state, and durable audit topics are **specified in the KIP** (Java production track under [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)) and are **not implemented here**. Full matrix: [doc/kip-alignment.md](doc/kip-alignment.md).
 
-![Kafka MCP Enterprise - product image](doc/assets/kafka-mcp-banner.png)
-
-*Product packaging image for the PyPI package (not a web UI).*
-
 ### Implemented vs Spec-only
 
 | Area | This reference | KIP / Java track |
