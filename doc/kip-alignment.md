@@ -37,7 +37,7 @@ What we *do* keep current: Phase-1 tools/resources that fit in-memory, the full 
 | Audit | **in-memory** hash-chained buffer | Durable append-only audit topic |
 | Secure-by-default | **read/consume allow-list** (`SECURE_DEFAULT_TOOLS`) | Same posture in KIP text |
 | Language | **Python** stdlib reference | **Java** production module |
-| Conformance | **295/295** automated checks | Test plan in KIP |
+| Conformance | **302/302** automated checks | Test plan in KIP |
 
 ## Implemented and covered by tests
 
