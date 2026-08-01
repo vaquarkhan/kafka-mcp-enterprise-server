@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka MCP Server (KIP-1318): Features, Security &amp; Proof</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <style>
+    :root{
+      --aws-navy:#0f1b2d; --aws-navy2:#16263f;
+      --aws-orange:#ff9900; --aws-cyan:#22d3ee; --aws-green:#34d399;
+      --aws-red:#f87171; --aws-purple:#a78bfa; --muted:#94a3b8;
+    }
+    .reveal { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .reveal .slides section { text-align: left; }
+    .reveal h1,.reveal h2,.reveal h3 { color:#fff; text-transform:none; letter-spacing:-0.5px; }
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.4em; border-bottom:3px solid var(--aws-orange); padding-bottom:.2em; display:inline-block; }
+    .reveal section.title-slide { text-align:center; }
+    .reveal .kicker { color:var(--aws-orange); font-weight:700; letter-spacing:2px; font-size:.5em; text-transform:uppercase; }
+    .reveal .sub { color:var(--muted); font-size:.6em; }
+    .reveal ul, .reveal ol { line-height:1.4; }
+    .reveal li { margin:.18em 0; font-size:.92em; }
+    .reveal .accent { color:var(--aws-orange); }
+    .reveal .cyan { color:var(--aws-cyan); }
+    .reveal .green { color:var(--aws-green); }
+    .reveal .red { color:var(--aws-red); }
+    .reveal .purple { color:var(--aws-purple); }
+    .reveal small, .reveal .small { font-size:.62em; color:var(--muted); }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.8em; }
+    .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.7em; }
+    .card { background:var(--aws-navy2); border:1px solid #24344d; border-radius:12px; padding:.6em .85em; }
+    .card h3 { font-size:.78em; margin:.1em 0 .3em; color:var(--aws-cyan); }
+    .card p, .card ul { font-size:.6em; color:#cbd5e1; margin:0; }
+    .card ul { padding-left:1em; }
+    .pill { display:inline-block; padding:.12em .6em; border-radius:999px; font-size:.5em; font-weight:700; }
+    .pill.pass { background:#065f46; color:#d1fae5; }
+    .pill.warn { background:#78350f; color:#fde68a; }
+    .pill.code { background:#0b1220; color:var(--aws-cyan); border:1px solid #24344d; }
+    table { font-size:.52em !important; }
+    .reveal table th { color:var(--aws-orange); border-bottom:2px solid var(--aws-orange); }
+    .reveal table td { border-bottom:1px solid #24344d; vertical-align:top; }
+    .big-stat { font-size:2.2em; font-weight:800; color:var(--aws-green); }
+    .flow { display:flex; align-items:center; justify-content:center; gap:.25em; flex-wrap:wrap; font-size:.46em; }
+    .flow .step { background:var(--aws-navy2); border:1px solid #24344d; border-radius:8px; padding:.35em .55em; color:#e2e8f0; }
+    .flow .arrow { color:var(--aws-orange); font-weight:800; }
+    .reveal pre { width:100%; font-size:.5em; box-shadow:none; }
+    .reveal pre code { border-radius:10px; padding:1em; max-height:none; }
+    .reveal section img.dash { width:70%; border-radius:12px; border:1px solid #24344d; display:block; margin:.2em auto; }
+    .reveal .slide-number { background:var(--aws-orange); color:#0f1b2d; }
+    .lede { font-size:.8em; color:#cbd5e1; }
+  </style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- 1 TITLE -->
+<section class="title-slide" data-background-color="#0f1b2d">
+  <div class="kicker">Apache Kafka · KIP-1318 · Model Context Protocol</div>
+  <h1>Kafka MCP Server</h1>
+  <p class="sub">A first-party, security-hardened way for AI agents to operate Apache Kafka.<br>Full feature tour, the security model, and proof that the guardrails hold.</p>
+  <p class="small">Reference implementation of Apache Kafka KIP-1318 · Vaquar Khan</p>
+</section>
+
+<!-- 2 AGENDA -->
+<section data-background-color="#0f1b2d">
+  <h2>Agenda</h2>
+  <ol style="font-size:.82em">
+    <li><span class="accent">The Kafka MCP Server</span>: what MCP is, why Kafka needs a first-party server</li>
+    <li><span class="accent">Features</span>: tools, resources, transports, stateful vs stateless</li>
+    <li><span class="accent">Security model</span>: the fail-closed pipeline, mapped to OWASP</li>
+    <li><span class="accent">Proof</span>: every security control run as a pass/fail test</li>
+    <li><span class="accent">Conclusion &amp; questions</span></li>
+  </ol>
+</section>
+
+<!-- 3 PART 1 -->
+<section data-background-color="#111a2e">
+  <div class="kicker">Part 1</div>
+  <h1>The Kafka MCP Server</h1>
+  <p class="sub">Giving AI agents safe, governed access to Kafka.</p>
+</section>
+
+<!-- 4 WHAT IS MCP -->
+<section>
+  <h2>What is MCP?</h2>
+  <p class="lede">The Model Context Protocol is an open standard (announced by Anthropic, Nov 2024; donated to the Linux Foundation Agentic AI Foundation, Dec 2025). It uses JSON-RPC 2.0 in a client, host, server architecture.</p>
+  <div class="grid3" style="margin-top:.5em">
+    <div class="card"><h3>Tools</h3><p>Functions the model executes. State changing actions.</p></div>
+    <div class="card"><h3>Resources</h3><p>Read only context and data for the model.</p></div>
+    <div class="card"><h3>Prompts</h3><p>Templated workflows (future phase).</p></div>
+  </div>
+  <p class="small" style="margin-top:.6em">MCP solves the N&times;M integration problem: one standard interface instead of a custom connector per (data source, AI tool) pair. Already adopted across Claude, GitHub Copilot, and Google ADK.</p>
+</section>
+
+<!-- 5 THE PROBLEM -->
+<section>
+  <h2>Why agents need Kafka</h2>
+  <ul style="font-size:.76em">
+    <li>An agent deciding <span class="cyan">what to do now</span> needs the live event history, not last night's snapshot.</li>
+    <li>Operational streams (change events, telemetry, tool results, approvals) are the agent's <span class="accent">memory, coordination layer, and control record</span>.</li>
+    <li>But today Kafka is reachable only via Java/Python client code, CLI tools, or the Connect REST API. <span class="red">An AI agent speaks none of these.</span></li>
+  </ul>
+  <div class="card" style="margin-top:.5em">
+    <p><strong class="accent">Motivating question:</strong> should Apache Kafka provide a first-party MCP server so agents can operate clusters through a standard protocol? The KIP answers yes.</p>
+  </div>
+</section>
+
+<!-- 6 WHY FIRST PARTY -->
+<section>
+  <h2>Why it must be first-party</h2>
+  <p class="lede">Wiring a Kafka cluster to an unvetted third-party MCP server means trusting a stranger with the control plane (ACLs, broker configs, reassignment) and the data plane.</p>
+  <div class="grid2" style="margin-top:.4em">
+    <div class="card"><h3 class="red">The ecosystem risk</h3><ul>
+      <li>Audit of 17 popular MCP servers: avg security score about 34/100, none declaring permissions</li>
+      <li>Exploitable issues across roughly 7,000 reachable MCP servers</li>
+      <li>First malicious MCP package appeared Sept 2025, undetected about two weeks</li>
+      <li>CVEs disclosed in a widely used Git MCP server</li></ul></div>
+    <div class="card"><h3 class="accent">First-party answer</h3><ul>
+      <li>Wraps native Java clients, zero new dependencies</li>
+      <li>Released with Kafka, stays API compatible</li>
+      <li>Security hardening baked in, not bolted on</li>
+      <li>Runs on vanilla Apache Kafka, Apache 2.0 licensed</li></ul></div>
+  </div>
+  <p class="small" style="margin-top:.4em">Named, demonstrated attack classes: tool poisoning, rug-pulls, confused-deputy, token pass-through, indirect prompt injection.</p>
+</section>
+
+<!-- 7 GAP ANALYSIS -->
+<section>
+  <h2>Gaps in existing servers</h2>
+  <p class="lede">At least five open-source Kafka MCP servers already exist, which proves demand. All share critical gaps that this KIP fills.</p>
+  <table style="margin-top:.4em">
+    <tr><th>Gap in existing servers</th><th>KIP-1318</th></tr>
+    <tr><td>No ACL management (security admin excluded)</td><td class="green">First MCP server to expose ACL management</td></tr>
+    <tr><td>No transactional produce (no exactly-once)</td><td class="green">produce_transactional (EOS)</td></tr>
+    <tr><td>No Streams or Share Group operations</td><td class="green">All four Kafka 4.x group types</td></tr>
+    <tr><td>Confluent-coupled (cloud REST only)</td><td class="green">Vanilla Apache Kafka, native clients</td></tr>
+  </table>
+</section>
+
+<!-- 8 CAPABILITIES -->
+<section>
+  <h2>New capabilities</h2>
+  <div class="grid2">
+    <div class="card"><h3>Topics &amp; data</h3><ul>
+      <li>Create, describe, alter, delete topics via natural language</li>
+      <li>Produce and consume, including transactional exactly-once</li></ul></div>
+    <div class="card"><h3>Groups &amp; lag</h3><ul>
+      <li>Monitor consumer lag, reset offsets, manage membership</li></ul></div>
+    <div class="card"><h3>Security &amp; cluster</h3><ul>
+      <li>Manage ACLs (first MCP to do so)</li>
+      <li>Inspect cluster health, KRaft quorum, broker configs</li>
+      <li>Manage transactions: abort hanging, fence producers</li></ul></div>
+    <div class="card"><h3>Ecosystem &amp; deploy</h3><ul>
+      <li>Kafka Connect connectors (create, pause, resume, restart, delete)</li>
+      <li>Run locally (stdio) or remote (Streamable HTTP) with OAuth 2.1</li></ul></div>
+  </div>
+</section>
+
+<!-- 9 TOOLS -->
+<section>
+  <h2>Tools, classified by risk</h2>
+  <div class="grid3">
+    <div class="card"><h3 class="green">read</h3><ul>
+      <li>list_topics, describe_topic</li><li>describe_cluster</li>
+      <li>list / describe consumer groups</li><li>consume_messages</li></ul></div>
+    <div class="card"><h3 class="accent">mutate</h3><ul>
+      <li>create_topic</li><li>alter_topic_config</li><li>produce_message</li>
+      <li>create_partitions</li></ul></div>
+    <div class="card"><h3 class="red">destructive-mutate</h3><ul>
+      <li>delete_topic, delete_records</li><li>create_acls, delete_acls</li>
+      <li>alter_broker_config</li><li>alter_partition_reassignments</li></ul></div>
+  </div>
+  <p class="small" style="margin-top:.5em">Classification drives readonly mode, the approval gate, and the taint guard. Each tool declares <code>kind / module / operation / resource_arg</code>, plus a real JSON <code>inputSchema</code>.</p>
+</section>
+
+<!-- 10 RESOURCES -->
+<section>
+  <h2>Resources (read-only, <code>kafka://</code>)</h2>
+  <div class="grid2">
+    <div class="card"><h3>Topics &amp; groups</h3><ul>
+      <li><code>kafka://topics</code>, <code>/{name}</code>, <code>/{name}/offsets</code></li>
+      <li><code>kafka://groups/{id}</code>, <code>/offsets</code>, <code>/lag</code></li></ul></div>
+    <div class="card"><h3>Cluster</h3><ul>
+      <li><code>kafka://cluster</code>, <code>/configs/{broker}</code></li>
+      <li><code>/metadata-quorum</code> (KRaft), <code>/features</code></li></ul></div>
+    <div class="card"><h3>Security &amp; txns</h3><ul>
+      <li><code>kafka://acls</code>, <code>kafka://transactions/{id}</code></li>
+      <li><code>kafka://streams-groups</code>, <code>share-groups</code></li></ul></div>
+    <div class="card"><h3>Operations</h3><ul>
+      <li><code>kafka://audit/recent</code>: tool, identity, decision, correlation id</li>
+      <li><code>kafka://health</code>: per-module circuit-breaker health</li></ul></div>
+  </div>
+</section>
+
+<!-- 11 ARCHITECTURE -->
+<section>
+  <h2>Architecture</h2>
+  <p class="lede">A standalone process (never inside the broker) that wraps <code>Admin</code>, <code>KafkaProducer</code>, and <code>KafkaConsumer</code>. Every request crosses transport, then the security pipeline, before reaching one of three decoupled modules.</p>
+  <div class="flow" style="margin-top:.6em">
+    <span class="step">MCP client<br>(host)</span><span class="arrow">&rarr;</span>
+    <span class="step">Transport<br>stdio / HTTP</span><span class="arrow">&rarr;</span>
+    <span class="step">Security<br>pipeline</span><span class="arrow">&rarr;</span>
+    <span class="step">Data-plane<br>produce / consume</span>
+    <span class="step">Control-plane<br>topics / ACLs</span>
+    <span class="step">Ecosystem<br>Connect</span>
+  </div>
+  <p class="small" style="margin-top:.7em">Modules are decoupled so a failure in one (its circuit breaker trips) cannot stall the others.</p>
+</section>
+
+<!-- 12 STATEFUL VS STATELESS -->
+<section>
+  <h2>Stateful vs stateless transports</h2>
+  <div class="grid2">
+    <div class="card"><h3 class="cyan">stdio (stateful session)</h3><ul>
+      <li>Host launches the server as a subprocess</li>
+      <li>JSON-RPC over stdin/stdout, one local session</li>
+      <li>Capability negotiation at initialize</li>
+      <li>Default for local development</li></ul></div>
+    <div class="card"><h3 class="accent">Streamable HTTP (stateless)</h3><ul>
+      <li>Each request is self-contained and independently authenticated</li>
+      <li><span class="green">No cross-request session state held</span></li>
+      <li>Removes session-hijacking and state-poisoning surface</li>
+      <li>Scales horizontally behind any load balancer, no sticky sessions</li></ul></div>
+  </div>
+  <p class="small" style="margin-top:.5em">Stateless HTTP is the security and scale story: correctness never depends on server-held memory. OAuth 2.1 with PKCE guards the HTTP transport.</p>
+</section>
+
+<!-- 13 SECURITY LAYERS -->
+<section>
+  <h2>Security architecture: layers</h2>
+  <ul style="font-size:.72em">
+    <li><span class="accent">Layer 1, broker auth:</span> standard client props (<code>security.protocol</code>, <code>sasl.*</code>, <code>ssl.*</code>) passed to Admin/Producer/Consumer.</li>
+    <li><span class="accent">Layer 2, MCP auth (HTTP):</span> OAuth 2.1 with PKCE; server validates bearer tokens (audience/issuer). stdio needs no MCP-layer auth.</li>
+    <li><span class="accent">Authorization:</span> inherits Kafka ACLs. Broker ACLs are load-bearing; MCP guardrails complement, they do not replace, least privilege at the cluster.</li>
+  </ul>
+  <div class="card" style="margin-top:.4em"><p style="font-size:.62em">Honest by design: the taint guard is best-effort (raises the bar on data-to-action escalation); broker ACLs remain the load-bearing control.</p></div>
+</section>
+
+<!-- 14 PIPELINE -->
+<section>
+  <h2>The 9-step fail-closed pipeline</h2>
+  <div class="flow">
+    <span class="step">1 · Bearer auth <span class="cyan">-32001</span></span><span class="arrow">&rarr;</span>
+    <span class="step">2 · Deny-list <span class="cyan">-32044</span></span><span class="arrow">&rarr;</span>
+    <span class="step">3 · Allow-list / readonly</span><span class="arrow">&rarr;</span>
+    <span class="step">4 · Scope <span class="cyan">-32041</span></span><span class="arrow">&rarr;</span>
+    <span class="step">5 · Policy engine</span><span class="arrow">&rarr;</span>
+    <span class="step">6 · Taint / IFC <span class="cyan">-32040</span></span><span class="arrow">&rarr;</span>
+    <span class="step">7 · Approval <span class="cyan">-32042</span></span><span class="arrow">&rarr;</span>
+    <span class="step">8 · Rate limit <span class="cyan">-32029</span></span><span class="arrow">&rarr;</span>
+    <span class="step">9 · Execute via breaker <span class="cyan">-32043</span></span>
+  </div>
+  <p class="small" style="margin-top:.7em">First denial wins. No execute-then-check paths. Around execute: input validation (-32046), rogue-agent quarantine (-32047), egress DLP on produce (-32045), sensitive-topic gating, post-execute DLP scrub, and audit. Identity comes only from the transport, never from tool arguments.</p>
+</section>
+
+<!-- 15 CONTROLS -->
+<section>
+  <h2>Controls in the box</h2>
+  <div class="grid2">
+    <div class="card"><h3>Scope &amp; access</h3><ul>
+      <li>Topic/group prefix allow-lists (<code>agent.*</code>)</li>
+      <li>readonly mode, tool allow/deny lists</li>
+      <li>Pluggable policy engine, fail-closed</li></ul></div>
+    <div class="card"><h3>Approval &amp; intent</h3><ul>
+      <li>HMAC-signed, TTL-bounded tokens</li>
+      <li>Bound to tool + resource + principal, single-use nonce</li>
+      <li>Dry-run tools return blast radius without executing</li></ul></div>
+    <div class="card"><h3>Data protection</h3><ul>
+      <li>DLP: 10 detectors (keys, JWT, AWS creds, PII, Luhn), redact/block/off</li>
+      <li>Config-secret masking, bounded reads (records + bytes)</li></ul></div>
+    <div class="card"><h3>Integrity &amp; resilience</h3><ul>
+      <li>Taint / IFC on mutate + destructive</li>
+      <li>Rate limits, per-module circuit breakers</li>
+      <li>Rogue-agent kill-switch, hash-chained audit</li></ul></div>
+  </div>
+</section>
+
+<!-- 15b GUARDRAIL CONFIG SURFACE -->
+<section>
+  <h2>Security guardrails: the config surface</h2>
+  <p class="lede">28 <code>mcp.*</code> guardrail properties, all opt-in with safe defaults. Secure-by-default posture: the recommended <code>tools.allowed</code> is read / non-destructive only, and operators enable destructive tools explicitly.</p>
+  <table style="margin-top:.3em">
+    <tr><th>Guardrail</th><th>Property</th><th>Default</th></tr>
+    <tr><td>Tool allow / deny + readonly</td><td><code>mcp.tools.allowed</code> · <code>.denied</code> · <code>mcp.readonly</code></td><td>read set · none · false</td></tr>
+    <tr><td>Namespace scope</td><td><code>mcp.allowed.topic.prefixes</code> · <code>.group.prefixes</code></td><td><code>*</code> (tighten!)</td></tr>
+    <tr><td>Taint / IFC</td><td><code>mcp.taint.guard.enabled</code> · <code>mcp.ifc.strict</code></td><td>true · false</td></tr>
+    <tr><td>Approval + dry-run</td><td><code>mcp.approval.required.tools</code> · <code>mcp.dryrun.tools</code></td><td>destructive set · none</td></tr>
+    <tr><td>Policy engine (OPA / Cedar)</td><td><code>mcp.policy.engine.url</code></td><td>none (fail-closed)</td></tr>
+    <tr><td>Bounded output</td><td><code>mcp.hard.max.records</code> · <code>.hard.max.bytes</code> · <code>.max.output.bytes</code></td><td>100 · 1 MiB · 256 KiB</td></tr>
+    <tr><td>DLP + secret masking</td><td><code>mcp.dlp.mode</code> · <code>.block.categories</code> · <code>.redact.sensitive.configs</code></td><td>redact · key/JWT/AWS · true</td></tr>
+    <tr><td>Rogue-agent kill-switch</td><td><code>mcp.max.destructive.per.minute</code></td><td>10</td></tr>
+    <tr><td>Resilience + identity</td><td><code>mcp.circuit.breaker.enabled</code> · <code>mcp.identity.propagation</code></td><td>true · false</td></tr>
+    <tr><td>HTTP auth (OAuth 2.1)</td><td><code>mcp.oauth.expected.audience</code> · <code>.issuer</code></td><td>none</td></tr>
+  </table>
+</section>
+
+<!-- 16 OWASP -->
+<section>
+  <h2>Mapped to OWASP Top 10 for LLM Apps (2025)</h2>
+  <table>
+    <tr><th>OWASP risk</th><th>KIP-1318 control</th><th>Code</th></tr>
+    <tr><td><span class="red">LLM01</span> Prompt Injection</td><td>Taint guard / IFC, sensitive-topic gating on consume</td><td class="cyan">-32040</td></tr>
+    <tr><td><span class="red">LLM02</span> Sensitive Information Disclosure</td><td>DLP redact/block, config-secret masking, bounded output</td><td class="cyan">-32045</td></tr>
+    <tr><td><span class="red">LLM03</span> Supply Chain</td><td>First-party Apache server, zero new deps (avoids unvetted third-party MCP)</td><td>-</td></tr>
+    <tr><td><span class="red">LLM05</span> Improper Output Handling</td><td>Post-execute DLP scrub, MCP <code>content</code> + <code>isError</code> wrapping</td><td>-</td></tr>
+    <tr><td><span class="red">LLM06</span> Excessive Agency</td><td>Allow/deny + readonly, prefix scope, approval gate, dry-run, kill-switch</td><td class="cyan">-32041 / -32042 / -32047</td></tr>
+    <tr><td><span class="red">LLM10</span> Unbounded Consumption</td><td>Rate limits, circuit breakers, hard record/byte ceilings</td><td class="cyan">-32029 / -32043</td></tr>
+  </table>
+  <p class="small" style="margin-top:.4em">Defenses also target named MCP attack classes, shown next.</p>
+</section>
+
+<!-- 16b MCP ATTACK DEFENSES -->
+<section>
+  <h2>Defending MCP-specific attacks</h2>
+  <table>
+    <tr><th>Attack class</th><th>What it does</th><th>Guardrail that stops it</th></tr>
+    <tr><td>Tool poisoning / rug-pull</td><td>Hidden instructions in tool metadata that change after approval</td><td>Pinned tool schemas, fixed <code>protocolVersion</code>, approval bound to tool + resource + principal, audit</td></tr>
+    <tr><td>Confused-deputy / token pass-through</td><td>Caller rides the server's privileges or forwards a stolen token</td><td>Identity only from transport (<code>_identity</code> args rejected), OAuth audience/issuer validation</td></tr>
+    <tr><td>Indirect prompt injection</td><td>Consumed record text tries to drive a destructive tool</td><td>Taint / IFC marks the session untrusted, blocks mutate/destructive (<span class="cyan">-32040</span>), sensitive-topic gating</td></tr>
+    <tr><td>Context flooding</td><td>Oversized responses exhaust the model's context</td><td>Bounded reads: hard record + byte ceilings, cumulative output cap</td></tr>
+    <tr><td>Rogue / runaway agent</td><td>Burst of destructive calls</td><td>Per-identity kill-switch + quarantine (<span class="cyan">-32047</span>), rate limits, circuit breakers</td></tr>
+  </table>
+  <p class="small" style="margin-top:.4em">First denial wins at every step; broker ACLs remain the load-bearing control underneath.</p>
+</section>
+
+<!-- 17 BENEFITS -->
+<section>
+  <h2>Benefits</h2>
+  <div class="grid2">
+    <div class="card"><h3>Platform teams</h3><ul>
+      <li>Ship Kafka access to agents with provable, fail-closed guardrails</li>
+      <li>Community-maintained, versioned with Kafka</li></ul></div>
+    <div class="card"><h3>Agent builders</h3><ul>
+      <li>Bounded blast radius: scope + approval + DLP + kill-switch</li>
+      <li>Standard MCP wire shape, works with any MCP host</li></ul></div>
+    <div class="card"><h3>Security &amp; compliance</h3><ul>
+      <li>Fail-closed, identity from transport only</li>
+      <li>Replay-protected approvals, tamper-resistant audit trail</li></ul></div>
+    <div class="card"><h3>Operations</h3><ul>
+      <li>Direct Partition Assignment removes ephemeral-consumer rebalance storms</li>
+      <li>Stateless HTTP scales without sticky sessions</li></ul></div>
+  </div>
+</section>
+
+<!-- 18 PART 2 : PROOF -->
+<section data-background-color="#111a2e">
+  <div class="kicker">Part 2</div>
+  <h1>Proving the guardrails hold</h1>
+  <p class="sub">Every security control, run as a pass/fail test.</p>
+</section>
+
+<!-- 18b WHAT IS THE MCP TEST SUITE + HTML DASHBOARD -->
+<section>
+  <h2>Validated with the MCP test suite</h2>
+  <p class="small" style="margin:.2em 0 .5em">A declarative, multi-language test tool: one <code>mcp-suite.yaml</code> is compiled onto the <code>mcp-test-harness</code> engine and run from Python or a native runner (JUnit5, Jest, xUnit, Go). It calls the server over MCP JSON-RPC and checks results, schemas, latency, and exact error codes. Below is the live HTML dashboard from this server's run.</p>
+  <iframe src="mcp-dashboard.html" title="MCP test dashboard"
+    style="width:100%;height:500px;border:1px solid #24344d;border-radius:12px;background:#0f1b2d"></iframe>
+</section>
+
+<!-- 19 PROOF -->
+<section>
+  <h2>Proof: security controls as pass/fail tests</h2>
+  <table>
+    <tr><th>Security control</th><th>Test (negative unless noted)</th><th>Expected</th><th>Result</th></tr>
+    <tr><td>Resource scope (prefix allow-list)</td><td>create <code>prod-payments</code></td><td>deny <span class="cyan">-32041</span></td><td><span class="pill pass">PASS</span></td></tr>
+    <tr><td>Approval gate (destructive)</td><td>delete_topic without token</td><td>deny <span class="cyan">-32042</span></td><td><span class="pill pass">PASS</span></td></tr>
+    <tr><td>Approval gate (ACL admin)</td><td>create_acls without token</td><td>deny <span class="cyan">-32042</span></td><td><span class="pill pass">PASS</span></td></tr>
+    <tr><td>Domain error correctness</td><td>describe / produce unknown topic</td><td><code>UnknownTopic</code></td><td><span class="pill pass">PASS</span></td></tr>
+    <tr><td>MCP content shape + schema (positive)</td><td>describe_cluster, list_topics, create_topic</td><td><code>content</code> + schema OK</td><td><span class="pill pass">PASS</span></td></tr>
+  </table>
+  <p class="small" style="margin-top:.4em">A denial that returns the <span class="accent">correct error code</span> is the feature. The suite verifies the code, not just that "something threw." Broader coverage: the repo's own conformance suite (85 checks) exercises every control.</p>
+    <p class="small" style="margin-top:.2em;opacity:.7">Validated with a declarative, multi-language MCP test suite.</p>
+</section>
+
+<!-- 21 DASHBOARD -->
+<section>
+  <h2>Proven, two ways</h2>
+  <img class="dash" src="revalidation-dashboard.svg" alt="dashboard: 9 passed, 0 failed">
+  <div class="grid2" style="margin-top:.2em">
+    <div class="card"><h3 class="green">Engine-driven</h3><p><code>mcp-suite run</code> &rarr; <strong>9 / 9 passed</strong> in ~0.5s, against the native server (no shim).</p></div>
+    <div class="card"><h3 class="cyan">Java-driven</h3><p>JUnit5 adapter &rarr; runSuite 9, <code>call("create")</code> 3, <code>call("approval")</code> 2. All green.</p></div>
+  </div>
+</section>
+
+<!-- 22 CONCLUSION -->
+<section data-background-color="#111a2e">
+  <div class="kicker">Part 3</div>
+  <h2>Conclusion</h2>
+  <ul style="font-size:.78em">
+    <li>Agentic AI needs Kafka as its operating memory; a <span class="accent">first-party MCP server</span> is the prerequisite that makes Kafka agent-ready.</li>
+    <li>It ships the security the ecosystem lacks: a <span class="accent">9-step fail-closed pipeline</span> mapped to OWASP LLM risks.</li>
+    <li>Stateless HTTP + identity-from-transport shrink the attack surface; broker ACLs stay load-bearing.</li>
+    <li>Every control is a <span class="green">repeatable test</span>. Result: <span class="big-stat" style="font-size:1.1em">9 / 9 green</span>, engine and Java driven.</li>
+  </ul>
+</section>
+
+<!-- 23 QUESTIONS -->
+<section class="title-slide" data-background-color="#0f1b2d">
+  <div class="kicker">Thank you</div>
+  <h1>Questions?</h1>
+  <p class="sub">Kafka MCP Server (KIP-1318) · MCP Test Suite 4.0.0</p>
+  <p class="small">KIP-1318 · KAFKA-20436 · github.com/vaquarkhan/kafka-mcp-enterprise-server-kip-1318</p>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, slideNumber: true, transition: 'slide',
+    width: 1280, height: 760, margin: 0.04,
+    plugins: [ RevealHighlight, RevealNotes ]
+  });
+</script>
+</body>
+</html>

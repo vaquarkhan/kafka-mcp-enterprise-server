@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="820" viewBox="0 0 1120 820" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1120" height="820" fill="url(#bg)"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1120" height="96" fill="url(#hdr)"/>
+  <text x="40" y="46" fill="#ffffff" font-size="28" font-weight="700">MCP Test Report: KIP-1318 Kafka MCP re-validation</text>
+  <text x="40" y="76" fill="#e0f2fe" font-size="15">mcp-test-suite 4.0.0  (engine mcp-test 3.0.9)  •  transport: stdio  •  native server (no content-wrap shim)</text>
+  <text x="1080" y="52" text-anchor="end" fill="#ffffff" font-size="34" font-weight="800">100%</text>
+  <text x="1080" y="76" text-anchor="end" fill="#e0f2fe" font-size="13">pass rate</text>
+
+  <!-- Summary cards -->
+  <g filter="url(#shadow)">
+    <rect x="40"  y="126" width="240" height="92" rx="12" fill="#064e3b"/>
+    <rect x="300" y="126" width="240" height="92" rx="12" fill="#3f1d2b"/>
+    <rect x="560" y="126" width="240" height="92" rx="12" fill="#3a2f10"/>
+    <rect x="820" y="126" width="260" height="92" rx="12" fill="#1e293b" stroke="#334155"/>
+  </g>
+  <text x="60"  y="166" fill="#6ee7b7" font-size="14">PASSED</text>
+  <text x="60"  y="204" fill="#ffffff" font-size="36" font-weight="800">9</text>
+  <text x="320" y="166" fill="#fca5a5" font-size="14">FAILED</text>
+  <text x="320" y="204" fill="#ffffff" font-size="36" font-weight="800">0</text>
+  <text x="580" y="166" fill="#fcd34d" font-size="14">SKIPPED / ERRORED</text>
+  <text x="580" y="204" fill="#ffffff" font-size="36" font-weight="800">0</text>
+  <text x="840" y="166" fill="#94a3b8" font-size="14">TOTAL TIME</text>
+  <text x="840" y="204" fill="#ffffff" font-size="36" font-weight="800">545.2 <tspan font-size="18" fill="#94a3b8">ms</tspan></text>
+
+  <!-- Table header -->
+  <text x="40" y="262" fill="#e2e8f0" font-size="18" font-weight="700">Cases (9)</text>
+  <line x1="40" y1="276" x2="1080" y2="276" stroke="#334155"/>
+  <text x="60"  y="300" fill="#64748b" font-size="12" font-weight="600">STATUS</text>
+  <text x="170" y="300" fill="#64748b" font-size="12" font-weight="600">CASE</text>
+  <text x="940" y="300" fill="#64748b" font-size="12" font-weight="600">TYPE</text>
+  <text x="1080" y="300" text-anchor="end" fill="#64748b" font-size="12" font-weight="600">LATENCY</text>
+
+  <!-- Rows -->
+  <!-- helper: each row 44px tall starting y=318 -->
+  <g font-size="14">
+    <!-- Row 1 -->
+    <rect x="40" y="318" width="1040" height="42" rx="8" fill="#0b1220"/>
+    <rect x="60" y="330" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="344" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="344" fill="#e2e8f0">describe_cluster_returns_identity_brokers</text>
+    <text x="940" y="344" fill="#38bdf8" font-size="12">happy</text>
+    <text x="1080" y="344" text-anchor="end" fill="#94a3b8">3.5 ms</text>
+
+    <!-- Row 2 -->
+    <rect x="40" y="366" width="1040" height="42" rx="8" fill="#111a2e"/>
+    <rect x="60" y="378" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="392" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="392" fill="#e2e8f0">list_topics_on_fresh_cluster_is_empty_but_well_formed</text>
+    <text x="940" y="392" fill="#38bdf8" font-size="12">happy</text>
+    <text x="1080" y="392" text-anchor="end" fill="#94a3b8">2.1 ms</text>
+
+    <!-- Row 3 -->
+    <rect x="40" y="414" width="1040" height="42" rx="8" fill="#0b1220"/>
+    <rect x="60" y="426" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="440" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="440" fill="#e2e8f0">create_allowed_agent_prefixed_topic_succeeds</text>
+    <text x="940" y="440" fill="#38bdf8" font-size="12">happy</text>
+    <text x="1080" y="440" text-anchor="end" fill="#94a3b8">1.5 ms</text>
+
+    <!-- Row 4 -->
+    <rect x="40" y="462" width="1040" height="42" rx="8" fill="#111a2e"/>
+    <rect x="60" y="474" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="488" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="488" fill="#e2e8f0">create_sandbox_prefixed_topic_succeeds</text>
+    <text x="940" y="488" fill="#38bdf8" font-size="12">happy</text>
+    <text x="1080" y="488" text-anchor="end" fill="#94a3b8">0.7 ms</text>
+
+    <!-- Row 5 -->
+    <rect x="40" y="510" width="1040" height="42" rx="8" fill="#0b1220"/>
+    <rect x="60" y="522" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="536" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="536" fill="#e2e8f0">prod_prefixed_topic_is_denied_by_scope_guardrail</text>
+    <text x="940" y="536" fill="#f59e0b" font-size="12">guardrail</text>
+    <text x="1080" y="536" text-anchor="end" fill="#94a3b8">0.9 ms</text>
+
+    <!-- Row 6 -->
+    <rect x="40" y="558" width="1040" height="42" rx="8" fill="#111a2e"/>
+    <rect x="60" y="570" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="584" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="584" fill="#e2e8f0">delete_topic_without_approval_token_is_denied</text>
+    <text x="940" y="584" fill="#f59e0b" font-size="12">guardrail</text>
+    <text x="1080" y="584" text-anchor="end" fill="#94a3b8">0.6 ms</text>
+
+    <!-- Row 7 -->
+    <rect x="40" y="606" width="1040" height="42" rx="8" fill="#0b1220"/>
+    <rect x="60" y="618" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="632" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="632" fill="#e2e8f0">create_acls_without_approval_token_is_denied</text>
+    <text x="940" y="632" fill="#f59e0b" font-size="12">guardrail</text>
+    <text x="1080" y="632" text-anchor="end" fill="#94a3b8">0.8 ms</text>
+
+    <!-- Row 8 -->
+    <rect x="40" y="654" width="1040" height="42" rx="8" fill="#111a2e"/>
+    <rect x="60" y="666" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="680" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="680" fill="#e2e8f0">describe_unknown_topic_returns_unknowntopic</text>
+    <text x="940" y="680" fill="#a78bfa" font-size="12">neg-error</text>
+    <text x="1080" y="680" text-anchor="end" fill="#94a3b8">1.3 ms</text>
+
+    <!-- Row 9 -->
+    <rect x="40" y="702" width="1040" height="42" rx="8" fill="#0b1220"/>
+    <rect x="60" y="714" width="58" height="20" rx="10" fill="#065f46"/><text x="89" y="728" text-anchor="middle" fill="#d1fae5" font-size="11" font-weight="700">PASS</text>
+    <text x="170" y="728" fill="#e2e8f0">produce_to_unknown_topic_returns_unknowntopic</text>
+    <text x="940" y="728" fill="#a78bfa" font-size="12">neg-error</text>
+    <text x="1080" y="728" text-anchor="end" fill="#94a3b8">0.9 ms</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="40" y1="764" x2="1080" y2="764" stroke="#334155"/>
+  <text x="40" y="792" fill="#64748b" font-size="12">Engine-driven + Java-driven (JUnit5 adapter) • guardrails validated as negative cases (scope -32041, approval -32042, UnknownTopic)</text>
+  <text x="1080" y="792" text-anchor="end" fill="#64748b" font-size="12">generated from mcp-suite run • fresh-pull/validation</text>
+</svg>

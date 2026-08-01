@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Test Report: Kafka MCP Server (KIP-1318)</title>
+<style>
+  :root{
+    --navy:#0f1b2d; --navy2:#16263f; --line:#24344d;
+    --orange:#ff9900; --cyan:#22d3ee; --green:#34d399; --red:#f87171;
+    --purple:#a78bfa; --muted:#94a3b8; --text:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--navy);color:var(--text);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:22px 26px}
+  header{background:linear-gradient(135deg,#0ea5e9,#6366f1);padding:22px 26px;border-bottom:4px solid var(--orange)}
+  header h1{margin:0;font-size:1.5rem}
+  header p{margin:4px 0 0;color:#e0f2fe;font-size:.85rem}
+  .gate{display:inline-block;margin-top:10px;background:#065f46;color:#d1fae5;
+    font-weight:800;border-radius:8px;padding:6px 14px;font-size:.85rem;letter-spacing:.5px}
+  .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0}
+  .c{background:var(--navy2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .c .k{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:1px}
+  .c .v{font-size:1.9rem;font-weight:800;margin-top:2px}
+  .c.pass .v{color:var(--green)} .c.fail .v{color:var(--red)}
+  .c.skip .v{color:var(--muted)} .c.time .v{color:var(--cyan)} .c.rate .v{color:var(--orange)}
+  .bar{height:10px;border-radius:6px;background:#0b1220;border:1px solid var(--line);overflow:hidden;margin:2px 0 20px}
+  .bar > i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#34d399,#22d3ee)}
+  h2{font-size:1.1rem;border-bottom:2px solid var(--orange);display:inline-block;padding-bottom:4px}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.82rem}
+  th{text-align:left;color:var(--orange);border-bottom:2px solid var(--orange);padding:8px 8px}
+  td{border-bottom:1px solid var(--line);padding:9px 8px;vertical-align:top}
+  tr:hover td{background:#111a2e}
+  code{background:#0b1220;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.82em;color:#e2e8f0}
+  .badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.7rem;font-weight:700}
+  .b-pass{background:#065f46;color:#d1fae5}
+  .t{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.7rem;font-weight:700}
+  .t-happy{background:#0c4a6e;color:#bae6fd}
+  .t-guard{background:#78350f;color:#fde68a}
+  .t-neg{background:#3b0764;color:#e9d5ff}
+  .muted{color:var(--muted)}
+  .pct{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 4px;max-width:420px}
+  .pct .c .v{font-size:1.3rem;color:var(--text)}
+  footer{color:var(--muted);font-size:.75rem;padding:18px 26px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MCP Test Report</h1>
+  <p>Target: Kafka MCP Server (KIP-1318) · suite: <code>mcp-suite.yaml</code> · engine: mcp-test-harness 3.0.9 · transport: stdio</p>
+  <div class="gate">QUALITY GATE: PASSED</div>
+</header>
+
+<div class="wrap">
+
+  <div class="cards">
+    <div class="c pass"><div class="k">Passed</div><div class="v">9</div></div>
+    <div class="c fail"><div class="k">Failed</div><div class="v">0</div></div>
+    <div class="c skip"><div class="k">Skipped</div><div class="v">0</div></div>
+    <div class="c rate"><div class="k">Pass rate</div><div class="v">100%</div></div>
+    <div class="c time"><div class="k">Duration</div><div class="v">545<span style="font-size:.9rem"> ms</span></div></div>
+  </div>
+  <div class="bar"><i></i></div>
+
+  <h2>Cases (9)</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Case</th><th>Tool</th><th>Type</th><th>Expected</th><th>Status</th><th>Latency</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>describe cluster returns identity + brokers</td><td><code>describe_cluster</code></td><td><span class="t t-happy">happy</span></td><td><span class="muted">content + schema</span></td><td><span class="badge b-pass">PASS</span></td><td>3.5 ms</td></tr>
+      <tr><td>2</td><td>list topics on fresh cluster is empty but well-formed</td><td><code>list_topics</code></td><td><span class="t t-happy">happy</span></td><td><span class="muted">content + schema</span></td><td><span class="badge b-pass">PASS</span></td><td>2.1 ms</td></tr>
+      <tr><td>3</td><td>create allowed agent-prefixed topic succeeds</td><td><code>create_topic</code></td><td><span class="t t-happy">happy</span></td><td><span class="muted">content + schema</span></td><td><span class="badge b-pass">PASS</span></td><td>1.5 ms</td></tr>
+      <tr><td>4</td><td>create sandbox-prefixed topic succeeds</td><td><code>create_topic</code></td><td><span class="t t-happy">happy</span></td><td><span class="muted">success</span></td><td><span class="badge b-pass">PASS</span></td><td>0.7 ms</td></tr>
+      <tr><td>5</td><td>prod-prefixed topic denied by scope guardrail</td><td><code>create_topic</code></td><td><span class="t t-guard">guardrail</span></td><td>deny <code>-32041</code></td><td><span class="badge b-pass">PASS</span></td><td>0.9 ms</td></tr>
+      <tr><td>6</td><td>delete_topic without approval token denied</td><td><code>delete_topic</code></td><td><span class="t t-guard">guardrail</span></td><td>deny <code>-32042</code></td><td><span class="badge b-pass">PASS</span></td><td>0.6 ms</td></tr>
+      <tr><td>7</td><td>create_acls without approval token denied</td><td><code>create_acls</code></td><td><span class="t t-guard">guardrail</span></td><td>deny <code>-32042</code></td><td><span class="badge b-pass">PASS</span></td><td>0.8 ms</td></tr>
+      <tr><td>8</td><td>describe unknown topic returns UnknownTopic</td><td><code>describe_topic</code></td><td><span class="t t-neg">neg-error</span></td><td><code>UnknownTopic</code></td><td><span class="badge b-pass">PASS</span></td><td>1.3 ms</td></tr>
+      <tr><td>9</td><td>produce to unknown topic returns UnknownTopic</td><td><code>produce_message</code></td><td><span class="t t-neg">neg-error</span></td><td><code>UnknownTopic</code></td><td><span class="badge b-pass">PASS</span></td><td>0.9 ms</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:22px">Latency percentiles</h2>
+  <div class="pct">
+    <div class="c"><div class="k">P50</div><div class="v">1.3 ms</div></div>
+    <div class="c"><div class="k">P95</div><div class="v">3.5 ms</div></div>
+    <div class="c"><div class="k">P99</div><div class="v">3.5 ms</div></div>
+  </div>
+
+</div>
+
+<footer>
+  Generated by mcp-suite (mcp-test-harness engine) · 4 happy-path · 3 guardrail · 2 negative-error · run against the native KIP-1318 server (no content-wrap shim).
+</footer>
+
+</body>
+</html>
