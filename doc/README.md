@@ -16,6 +16,8 @@ End-to-end guide for the Kafka MCP reference server.
 
 Hands-on scripts: [../examples/](../examples/README.md)
 
+Public site: [../site/](../site/) → https://vaquarkhan.github.io/kafka-mcp-enterprise-server/
+
 ## Product images
 
 ![Product image](assets/kafka-mcp-banner.png)

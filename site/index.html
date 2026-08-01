@@ -5,57 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kafka MCP Server (KIP-1318): Security-Proven Agentic Tooling</title>
   <meta name="description" content="A first-party, security-hardened Kafka MCP server for AI agents (Apache KIP-1318), with a fail-closed control pipeline mapped to OWASP.">
-  <style>
-    :root{
-      --navy:#0f1b2d; --navy2:#16263f; --line:#24344d;
-      --orange:#ff9900; --cyan:#22d3ee; --green:#34d399; --muted:#94a3b8; --text:#e2e8f0;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--navy);color:var(--text);line-height:1.6}
-    a{color:var(--cyan);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-    header.hero{background:linear-gradient(135deg,#0f1b2d 0%,#16263f 100%);border-bottom:3px solid var(--orange);padding:72px 0 56px}
-    .kicker{color:var(--orange);font-weight:700;letter-spacing:2px;text-transform:uppercase;font-size:.8rem}
-    h1{font-size:2.6rem;margin:.2em 0 .1em;letter-spacing:-1px}
-    h1 .accent{color:var(--orange)}
-    .lede{color:var(--muted);font-size:1.15rem;max-width:720px}
-    .btns{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
-    .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:700;font-size:.95rem}
-    .btn.primary{background:var(--orange);color:var(--navy)}
-    .btn.primary:hover{text-decoration:none;filter:brightness(1.08)}
-    .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
-    .btn.ghost:hover{text-decoration:none;border-color:var(--cyan)}
-    section{padding:52px 0;border-bottom:1px solid var(--line)}
-    h2{font-size:1.7rem;display:inline-block;border-bottom:3px solid var(--orange);padding-bottom:.15em;margin:0 0 .8em}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
-    .card{background:var(--navy2);border:1px solid var(--line);border-radius:14px;padding:20px}
-    .card h3{margin:.1em 0 .4em;color:var(--cyan);font-size:1.05rem}
-    .card p{margin:0;color:#cbd5e1;font-size:.92rem}
-    .stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:8px}
-    .stat .n{font-size:2.2rem;font-weight:800;color:var(--green)}
-    .stat .l{color:var(--muted);font-size:.85rem}
-    .dash{width:100%;border-radius:14px;border:1px solid var(--line);margin-top:10px}
-    ul.clean{list-style:none;padding:0}
-    ul.clean li{padding:8px 0;border-bottom:1px solid var(--line)}
-    ul.clean li::before{content:"▸ ";color:var(--orange)}
-    code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:.85em;color:#e2e8f0}
-    footer{padding:36px 0;color:var(--muted);font-size:.85rem}
-    .pill{display:inline-block;background:#065f46;color:#d1fae5;border-radius:999px;padding:2px 12px;font-size:.72rem;font-weight:700}
-  </style>
+  <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 
 <header class="hero">
   <div class="wrap">
-    <div class="kicker">Apache Kafka · KIP-1318 · Model Context Protocol</div>
+    <div class="kicker">Apache Kafka | KIP-1318 | Model Context Protocol</div>
     <h1>Kafka MCP Server <span class="accent">(KIP-1318)</span></h1>
     <p class="lede">A first-party, security-hardened MCP server that gives AI agents <strong>safe, governed</strong> access to Apache Kafka, with a fail-closed control pipeline mapped to OWASP and proven by tests.</p>
     <div class="btns">
-      <a class="btn primary" href="slides.html">▶ View the presentation</a>
-      <a class="btn ghost" href="revalidation-report.html">Live test report</a>
+      <a class="btn primary" href="https://vaquarkhan.github.io/kafka-mcp-enterprise-server/">Website</a>
+      <a class="btn ghost" href="https://pypi.org/project/kafka-mcp-enterprise/">PyPI</a>
+      <a class="btn ghost" href="https://glama.ai/mcp/servers/vaquarkhan/kafka-mcp-enterprise-server">Glama</a>
+
+      <a class="btn primary" href="slides.html">View the presentation</a>
+      <a class="btn ghost" href="mcp-dashboard.html">Live test report</a>
       <a class="btn ghost" href="revalidation-dashboard.svg">Dashboard (SVG)</a>
-      <a class="btn ghost" href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server-kip-1318">Server repo</a>
+      <a class="btn ghost" href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">Server repo</a>
       <a class="btn ghost" href="https://github.com/vaquarkhan/mcp-test-suite">Test suite repo</a>
     </div>
   </div>
@@ -68,7 +35,7 @@
       <div class="stat"><div class="n">11</div><div class="l">governed Kafka tools</div></div>
       <div class="stat"><div class="n">9</div><div class="l">fail-closed pipeline stages</div></div>
       <div class="stat"><div class="n">9/9</div><div class="l">re-validation tests green</div></div>
-      <div class="stat"><div class="n">2×</div><div class="l">proven engine- &amp; Java-driven</div></div>
+      <div class="stat"><div class="n">2x</div><div class="l">proven engine- &amp; Java-driven</div></div>
     </div>
   </div>
 </section>
@@ -129,7 +96,7 @@
 <footer>
   <div class="wrap">
     <p>Kafka MCP Server (KIP-1318) · MCP Test Suite 4.0.0 · reference implementation by <a href="https://github.com/vaquarkhan">Vaquar Khan</a>.</p>
-    <p><a href="slides.html">Presentation</a> · <a href="revalidation-dashboard.svg">Dashboard</a> · <a href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server-kip-1318">Server</a> · <a href="https://github.com/vaquarkhan/mcp-test-suite">Test suite</a></p>
+    <p><a href="slides.html">Presentation</a> · <a href="revalidation-dashboard.svg">Dashboard</a> · <a href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">Server</a> · <a href="https://github.com/vaquarkhan/mcp-test-suite">Test suite</a></p>
   </div>
 </footer>
 

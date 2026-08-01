@@ -24,7 +24,7 @@ from .errors import (
 )
 from .resilience import CircuitBreaker, RateLimiter
 from .security import SecurityPipeline, register_taint
-from .tools import TOOL_INPUT_SCHEMAS, build_tools
+from .tools import TOOL_INPUT_SCHEMAS, _mcp_annotations, build_tools
 from . import resources as resources_mod
 
 logger = logging.getLogger("kafka_mcp.server")
@@ -204,13 +204,15 @@ class KafkaMcpServer:
         tools = []
         for name in self._visible_tools():
             _h, meta = self.tools[name]
+            kind = str(meta.get("kind") or "read")
             tools.append(
                 {
                     "name": name,
-                    "description": f"{meta.get('kind')} / {meta.get('module')} / {meta.get('operation')}",
+                    "description": meta.get("description")
+                    or f"{kind} / {meta.get('module')} / {meta.get('operation')}",
                     "inputSchema": TOOL_INPUT_SCHEMAS.get(name, {"type": "object"}),
                     "annotations": {
-                        "kind": meta.get("kind"),
+                        **_mcp_annotations(kind),
                         "module": meta.get("module"),
                         "operation": meta.get("operation"),
                     },
