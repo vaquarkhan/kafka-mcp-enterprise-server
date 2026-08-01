@@ -92,9 +92,10 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   animation: navIn 0.7s ease both, pillFloat 3.6s ease-in-out infinite;
 }
 .nav-pill:nth-child(1) { animation-delay: 0.05s, 0s; }
-.nav-pill:nth-child(2) { animation-delay: 0.12s, 0.25s; }
-.nav-pill:nth-child(3) { animation-delay: 0.19s, 0.5s; }
-.nav-pill:nth-child(4) { animation-delay: 0.26s, 0.75s; }
+.nav-pill:nth-child(2) { animation-delay: 0.1s, 0.2s; }
+.nav-pill:nth-child(3) { animation-delay: 0.15s, 0.4s; }
+.nav-pill:nth-child(4) { animation-delay: 0.2s, 0.6s; }
+.nav-pill:nth-child(5) { animation-delay: 0.25s, 0.8s; }
 .nav-pill:hover {
   text-decoration: none;
   transform: translateY(-2px) scale(1.03);
@@ -398,6 +399,82 @@ pre {
   color: var(--muted);
   font-size: 0.95rem;
 }
+
+.feat-banner {
+  margin: 0 0 2rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #020a0e;
+}
+.feat-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.feat-block {
+  margin: 0 0 1.75rem;
+  padding: 1.15rem 1.2rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(4, 18, 22, 0.55);
+}
+.feat-block h3 {
+  margin: 0 0 0.85rem;
+  font-size: 1.12rem;
+  letter-spacing: -0.01em;
+  color: #dff7f2;
+}
+.feat-note {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.feat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.feat-table th,
+.feat-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.55rem 0.65rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+.feat-table thead th {
+  color: var(--teal);
+  font-weight: 600;
+  border-top: none;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.feat-table tbody th {
+  width: 32%;
+  color: #d7ebe7;
+  font-weight: 600;
+}
+.feat-table td { color: #b9d4cf; }
+.feat-table code,
+.feat-note code,
+.aside code,
+.lede code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: #99f6e4;
+}
+.code-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.85rem;
+  font-size: 0.9rem;
+}
+.code-grid code {
+  font-family: var(--mono);
+  color: #5eead4;
+}
+.code-grid span { color: #b9d4cf; }
 
 .proof {
   display: grid;

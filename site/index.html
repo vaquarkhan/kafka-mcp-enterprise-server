@@ -32,6 +32,7 @@
           <span class="nav-hot-label">Presentation</span>
           <span class="nav-hot-go" aria-hidden="true">Open</span>
         </a>
+        <a class="nav-pill" role="listitem" href="#features">Features</a>
         <a class="nav-pill" role="listitem" href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka" target="_blank" rel="noopener">KIP-1318</a>
         <a class="nav-pill" role="listitem" href="https://github.com/vaquarkhan/mcp-test-suite" target="_blank" rel="noopener">Test suite</a>
         <a class="nav-pill" role="listitem" href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server" target="_blank" rel="noopener">GitHub</a>
@@ -83,6 +84,204 @@
         <div class="step"><b>08</b><span>Rate</span></div>
         <div class="step"><b>09</b><span>Breaker</span></div>
       </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <h2>All server features</h2>
+      <p class="lede">
+        Everything below is implemented in <code>kafka_mcp/</code> and covered by the
+        <strong>85/85</strong> conformance suite and/or examples, unless noted as an intentional reference gap.
+      </p>
+      <figure class="feat-banner">
+        <img src="assets/kafka-mcp-features.png" width="1200" height="620" alt="What this package includes: security pipeline, MCP tools, and how it runs">
+      </figure>
+
+      <article class="feat-block">
+        <h3>A. MCP protocol &amp; surface</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>JSON-RPC 2.0</th><td>Strict <code>jsonrpc: "2.0"</code> request/response</td></tr>
+            <tr><th><code>initialize</code></th><td><code>protocolVersion</code>, <code>serverInfo</code>, <code>capabilities</code></td></tr>
+            <tr><th><code>tools/list</code></th><td>Visible tools honor deny-list, allow-list, and readonly</td></tr>
+            <tr><th><code>tools/call</code></th><td>Full fail-closed pipeline + handler; MCP <code>content</code> + <code>isError</code></td></tr>
+            <tr><th><code>resources/list</code> / <code>read</code></th><td><code>kafka://</code> catalog and topic/cluster/group/audit/health reads</td></tr>
+            <tr><th>stdio transport</th><td>Newline-delimited JSON (<code>kafka-mcp-enterprise</code>)</td></tr>
+            <tr><th>Stateless approvals</th><td>HMAC tokens self-contained (no sticky session)</td></tr>
+            <tr><th>Correlation IDs</th><td>Per-call <code>corr_id</code> on audit entries</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>B. Tools (11) - classified</h3>
+        <table class="feat-table">
+          <thead><tr><th>Tool</th><th>kind</th><th>module</th><th>Kafka op</th></tr></thead>
+          <tbody>
+            <tr><td><code>list_topics</code></td><td>read</td><td>control_plane</td><td>DESCRIBE</td></tr>
+            <tr><td><code>describe_topic</code></td><td>read</td><td>control_plane</td><td>DESCRIBE</td></tr>
+            <tr><td><code>describe_cluster</code></td><td>read</td><td>control_plane</td><td>DESCRIBE</td></tr>
+            <tr><td><code>list_consumer_groups</code></td><td>read</td><td>control_plane</td><td>DESCRIBE</td></tr>
+            <tr><td><code>describe_consumer_group</code></td><td>read</td><td>control_plane</td><td>DESCRIBE</td></tr>
+            <tr><td><code>consume_messages</code></td><td>read</td><td>data_plane</td><td>READ</td></tr>
+            <tr><td><code>create_topic</code></td><td>mutate</td><td>control_plane</td><td>CREATE</td></tr>
+            <tr><td><code>alter_topic_config</code></td><td>mutate</td><td>control_plane</td><td>ALTER</td></tr>
+            <tr><td><code>produce_message</code></td><td>mutate</td><td>data_plane</td><td>WRITE</td></tr>
+            <tr><td><code>delete_topic</code></td><td>destructive</td><td>control_plane</td><td>DELETE</td></tr>
+            <tr><td><code>create_acls</code></td><td>destructive</td><td>control_plane</td><td>ALTER</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>C. Resources (<code>kafka://</code>)</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th><code>kafka://topics</code></th><td>List topics</td></tr>
+            <tr><th><code>kafka://topics/{name}</code></th><td>Describe topic</td></tr>
+            <tr><th><code>kafka://cluster</code></th><td>Cluster id + brokers</td></tr>
+            <tr><th><code>kafka://groups</code></th><td>Consumer groups</td></tr>
+            <tr><th><code>kafka://audit/recent</code></th><td>Recent audit entries</td></tr>
+            <tr><th><code>kafka://health</code></th><td>Liveness + per-module circuit breaker state</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>D. Fail-closed security pipeline</h3>
+        <p class="feat-note">Every <code>tools/call</code> - first denial wins.</p>
+        <table class="feat-table">
+          <thead><tr><th>Step</th><th>Control</th><th>Code</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Bearer auth (audience / issuer when configured)</td><td><code>-32001</code></td></tr>
+            <tr><td>2</td><td>Deny-list (<code>tools_denied</code>)</td><td><code>-32044</code></td></tr>
+            <tr><td>3</td><td>Allow-list + readonly</td><td><code>-32044</code></td></tr>
+            <tr><td>4</td><td>Topic / group prefix scope</td><td><code>-32041</code></td></tr>
+            <tr><td>5</td><td>Policy engine (deny or exception → fail-closed)</td><td><code>-32044</code></td></tr>
+            <tr><td>6</td><td>Taint / IFC (destructive; approval bypasses)</td><td><code>-32040</code></td></tr>
+            <tr><td>7</td><td>HMAC approval gate</td><td><code>-32042</code></td></tr>
+            <tr><td>8</td><td>Rate limit (general vs admin)</td><td><code>-32029</code></td></tr>
+            <tr><td>9</td><td>Execute via per-module circuit breaker</td><td><code>-32043</code></td></tr>
+          </tbody>
+        </table>
+        <p class="feat-note">Also enforced: input validation, rogue quarantine, identity propagation, sensitive-topic gating, egress DLP, dry-run, consume/byte bounds, post-execute scrub, taint registration, audit.</p>
+      </article>
+
+      <article class="feat-block">
+        <h3>E. Data protection (DLP)</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>Modes</th><td><code>redact</code> | <code>block</code> | <code>off</code></td></tr>
+            <tr><th>Default block</th><td><code>private_key</code>, <code>aws_access_key</code>, <code>jwt</code></td></tr>
+            <tr><th>Detectors (10)</th><td>email, ssn, credit_card (Luhn), phone, ipv4, aws_access_key, private_key, jwt, iban, secret_assignment</td></tr>
+            <tr><th>Consume / produce</th><td>Redact PII on read; egress block on produce (<code>-32045</code>)</td></tr>
+            <tr><th>Config masking</th><td>Password/secret-like keys on describe</td></tr>
+            <tr><th>Scrub outputs</th><td>Walk entire JSON result tree</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>F. Approval, taint &amp; IFC</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>HMAC tokens</th><td>Mint/verify; TTL; tool + resource + principal + nonce bind</td></tr>
+            <tr><th>Approval-required</th><td><code>delete_topic</code>, <code>create_acls</code>, and related destructive names</td></tr>
+            <tr><th>Taint guard</th><td>Best-effort; approval can bypass; broker ACLs remain load-bearing</td></tr>
+            <tr><th><code>ifc_strict</code></th><td>After untrusted read, blocks destructive/control-plane without approval</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>G. Scoping, exposure &amp; identity</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>Allow / deny lists</th><td><code>tools_allowed</code>, <code>tools_denied</code></td></tr>
+            <tr><th>Readonly mode</th><td>Blocks create / produce / alter / delete / ACLs</td></tr>
+            <tr><th>Prefixes</th><td><code>allowed_topic_prefixes</code>, <code>allowed_group_prefixes</code></td></tr>
+            <tr><th>Identity propagation</th><td>Optional per-principal broker ACL check</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>H. Resilience &amp; blast radius</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>Circuit breakers</th><td>Per module: <code>data_plane</code>, <code>control_plane</code>, <code>ecosystem</code></td></tr>
+            <tr><th>Isolation</th><td>Control-plane open does not take down data-plane consume/produce</td></tr>
+            <tr><th>Rate limits</th><td>General + admin buckets</td></tr>
+            <tr><th>Quarantine</th><td><code>max_destructive_per_minute</code> per identity (<code>-32047</code>)</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>I. Consume semantics</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>No <code>groupId</code></th><td>Direct Partition Assignment - no group, no rebalance</td></tr>
+            <tr><th>With <code>groupId</code></th><td>Classic group path; rebalance counter increments</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>J–K. Backend &amp; audit</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>In-memory Kafka</th><td>Topics, produce/consume, groups, ACLs, cluster describe, dependency hooks</td></tr>
+            <tr><th>Audit ring</th><td>Hash-chained ALLOW/DENY; param truncation; <code>kafka://audit/recent</code></td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>L. Error codes (15)</h3>
+        <div class="code-grid">
+          <code>-32700</code><span>PARSE_ERROR</span>
+          <code>-32600</code><span>INVALID_REQUEST</span>
+          <code>-32601</code><span>METHOD_NOT_FOUND</span>
+          <code>-32602</code><span>INVALID_PARAMS</span>
+          <code>-32603</code><span>INTERNAL_ERROR</span>
+          <code>-32001</code><span>UNAUTHORIZED</span>
+          <code>-32029</code><span>RATE_LIMITED</span>
+          <code>-32040</code><span>TAINT_VIOLATION</span>
+          <code>-32041</code><span>SCOPE_VIOLATION</span>
+          <code>-32042</code><span>APPROVAL_REQUIRED</span>
+          <code>-32043</code><span>DEPENDENCY_UNAVAILABLE</span>
+          <code>-32044</code><span>POLICY_DENIED</span>
+          <code>-32045</code><span>SENSITIVE_DATA_BLOCKED</span>
+          <code>-32046</code><span>VALIDATION_FAILED</span>
+          <code>-32047</code><span>QUARANTINED</span>
+        </div>
+      </article>
+
+      <article class="feat-block">
+        <h3>M–N. Config, quality &amp; packaging</h3>
+        <table class="feat-table">
+          <tbody>
+            <tr><th>32 config fields</th><td>Scopes, DLP, approval secret, rate limits, IFC, hard caps, identity, OAuth audience/issuer, and more</td></tr>
+            <tr><th>Tests</th><td>85/85 conformance + smoke + end-to-end demo</td></tr>
+            <tr><th>Examples</th><td>Six scenario folders with real-world <code>data/</code> fixtures</td></tr>
+            <tr><th>PyPI</th><td><code>kafka-mcp-enterprise</code> · CLI <code>kafka-mcp-enterprise</code> · stdlib-only core</td></tr>
+            <tr><th>Optional OTel</th><td><code>pip install kafka-mcp-enterprise[otel]</code> - not required</td></tr>
+            <tr><th>Agent DX</th><td><code>AGENTS.md</code> + Cursor / portable skills</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="feat-block">
+        <h3>O. Intentional reference gaps</h3>
+        <p class="feat-note">
+          Full HTTP listener · live brokers · HTTP policy URL client · durable <code>audit_topic</code> publish ·
+          wall-clock <code>dependency_timeout_ms</code> · production language in the KIP is <strong>Java</strong>
+          (this package is the Python reference). See
+          <a href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server/blob/main/doc/kip-alignment.md">kip-alignment.md</a>.
+        </p>
+      </article>
     </div>
   </section>
 
