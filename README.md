@@ -4,9 +4,24 @@
 [![Python](https://img.shields.io/pypi/pyversions/kafka-mcp-enterprise?cacheSeconds=3600)](https://pypi.org/project/kafka-mcp-enterprise/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
+> **Scope:** This is a **stdio, in-memory conformance reference** for the [KIP-1318](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka) **security control model**. Real brokers, Streamable HTTP, OAuth 2.1, EOS/fencing, Connect tooling, distributed rate/breaker state, and durable audit topics are **specified in the KIP** (Java production track under [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)) and are **not implemented here**. Full matrix: [doc/kip-alignment.md](doc/kip-alignment.md).
+
 ![Kafka MCP Enterprise - product image](doc/assets/kafka-mcp-banner.png)
 
 *Product packaging image for the PyPI package (not a web UI).*
+
+### Implemented vs Spec-only
+
+| Area | This reference | KIP / Java track |
+|------|----------------|------------------|
+| Transport | stdio only | stdio + Streamable HTTP + OAuth |
+| Backend | In-memory Kafka | Real Admin / Producer / Consumer |
+| Tools | 13 registered | ~30+ (incl. Connect, EOS, group admin) |
+| Resources | subset + Phase-1 lag/offsets | ~20 `kafka://` URIs |
+| Rate / quarantine | per-process | optional distributed backend |
+| Audit | in-memory hash chain | durable audit topic |
+| Default allow-list | read/consume only (`SECURE_DEFAULT_TOOLS`) | same secure-by-default posture |
+| Conformance | **302/302** checks | KIP test plan |
 
 ### Website
 
@@ -41,7 +56,7 @@ echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise
 
 ---
 
-**Reference implementation** of [**KIP-1318**](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka): a first-party [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for Apache Kafka-secure by design, fail-closed by default, and built for agent workloads that must not become a confused deputy on your cluster.
+**Python conformance reference** for [**KIP-1318**](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka): a Model Context Protocol (MCP) control plane for agent access to Kafka. The KIP's **production** target is **Java**. This package validates the fail-closed security model over **stdio** against an **in-memory** backend - it is not a drop-in for the forthcoming first-party Java MCP server.
 
 | | |
 |---|---|
@@ -57,7 +72,7 @@ echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise
 
 ## Why this exists
 
-AI agents need governed Kafka access-not ad-hoc scripts, unbounded consumes, or shared “god” principals. KIP-1318 proposes a standalone MCP process (stdio / HTTP) that exposes tools and `kafka://` resources without changing the Kafka wire protocol. This reference implements the **full enterprise control plane** below.
+AI agents need governed Kafka access-not ad-hoc scripts, unbounded consumes, or shared "god" principals. KIP-1318 proposes a standalone MCP process (stdio / HTTP in the **spec**) that exposes tools and `kafka://` resources without changing the Kafka wire protocol. This reference implements the **fail-closed security control plane** over **stdio** against an **in-memory** backend (see matrix above).
 
 Broker **ACLs remain authoritative**. Guardrails here *complement* them; they never replace them.
 
@@ -65,7 +80,7 @@ Broker **ACLs remain authoritative**. Guardrails here *complement* them; they ne
 
 ![Kafka MCP Enterprise - what’s included](doc/assets/kafka-mcp-features.png)
 
-*Documentation product image (not a web UI).* Checklist of what this Python stdio reference implements: fail-closed pipeline, DLP, 11 tools, `kafka://` resources, tests, and examples.
+*Documentation product image (not a web UI).* Checklist of what this Python stdio reference implements: fail-closed pipeline, DLP, 13 tools, `kafka://` resources, tests, and examples.
 
 ### How it runs
 
@@ -73,12 +88,12 @@ Broker **ACLs remain authoritative**. Guardrails here *complement* them; they ne
 flowchart LR
   Agent["Agent / IDE"]
   MCP["kafka-mcp-enterprise<br/>stdio JSON-RPC + pipeline"]
-  Kafka["Kafka<br/>ACLs authoritative"]
+  Mem["InMemoryKafka<br/>conformance backend"]
   Agent -->|"MCP tools/call"| MCP
-  MCP -->|"Admin / Produce / Consume"| Kafka
+  MCP -->|"tools / resources"| Mem
 ```
 
-**This repo:** Python stdlib reference (in-memory Kafka for tests). **KIP production track:** Java (`tools/mcp-server` / [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)), not shipped here.
+**This repo:** Python stdlib reference (in-memory Kafka for tests). **KIP production track:** Java wrapping real Admin/Producer/Consumer ([KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)), not shipped here.
 
 ### Fail-closed pipeline (overview)
 
@@ -95,7 +110,7 @@ Full detail: [doc/security-controls.md](doc/security-controls.md) · architectur
 
 ## Complete features, security controls & guardrails
 
-Nothing below is optional marketing - every item is implemented in `kafka_mcp/` and covered by the **85/85** conformance suite and/or demos/examples unless noted as a documented reference gap.
+Nothing below is optional marketing - every item is implemented in `kafka_mcp/` and covered by the **302/302** conformance suite and/or demos/examples unless noted as a documented reference gap.
 
 ### A. MCP protocol & surface
 
@@ -112,7 +127,7 @@ Nothing below is optional marketing - every item is implemented in `kafka_mcp/` 
 | Stateless approvals | HMAC tokens self-contained (no sticky session required for authz correctness) |
 | Correlation IDs | Per-call `corr_id` on audit entries |
 
-### B. Tools (11) - classified
+### B. Tools (13) - classified
 
 | Tool | kind | module | Kafka op |
 |------|------|--------|----------|
@@ -125,8 +140,12 @@ Nothing below is optional marketing - every item is implemented in `kafka_mcp/` 
 | `create_topic` | mutate | control_plane | CREATE |
 | `alter_topic_config` | mutate | control_plane | ALTER |
 | `produce_message` | mutate | data_plane | WRITE |
+| `alter_consumer_group_offsets` | mutate | control_plane | ALTER |
 | `delete_topic` | destructive | control_plane | DELETE |
+| `delete_consumer_group` | destructive | control_plane | DELETE |
 | `create_acls` | destructive | control_plane | ALTER |
+
+Shipped default exposes the six **read** tools only (`SECURE_DEFAULT_TOOLS`).
 
 ### C. Resources (`kafka://`)
 
@@ -134,8 +153,12 @@ Nothing below is optional marketing - every item is implemented in `kafka_mcp/` 
 |-----|---------|
 | `kafka://topics` | List topics |
 | `kafka://topics/{name}` | Describe topic |
+| `kafka://topics/{name}/offsets` | Earliest/latest offsets per partition |
 | `kafka://cluster` | Cluster id + brokers |
 | `kafka://groups` | Consumer groups |
+| `kafka://groups/{id}` | Describe a consumer group |
+| `kafka://groups/{id}/offsets` | Committed offsets |
+| `kafka://groups/{id}/lag` | Per-topic/partition lag (KIP Phase 1) |
 | `kafka://audit/recent` | Recent audit entries |
 | `kafka://health` | Liveness + per-module circuit breaker state |
 
@@ -200,7 +223,7 @@ Every `tools/call` - **first denial wins**:
 | Capability | Detail |
 |------------|--------|
 | Tool allow-list / deny-list | `tools_allowed`, `tools_denied` |
-| Secure-by-default guidance | Ops should set allow-list to read/non-destructive (harness default `*` - tighten in prod) |
+| **Secure-by-default guidance** | Shipped default is read/consume only; expand `tools_allowed` for mutate/destructive |
 | Readonly mode | Disables create/produce/alter/delete/ACLs |
 | Topic prefixes | `allowed_topic_prefixes` |
 | Group prefixes | `allowed_group_prefixes` |
@@ -270,7 +293,8 @@ Full defaults: [doc/configuration.md](doc/configuration.md).
 
 | Feature | Detail |
 |---------|--------|
-| Conformance suite | **85/85** checks (functional, security, guardrails, mechanisms, resources, stdio, audit hardening) |
+| Conformance suite | **302/302** checks (incl. KIP Test Plan matrix + coverage gap-fill) |
+| Line coverage | **100%** of `kafka_mcp/` via `python run_coverage.py` (optional `coverage` package) |
 | Smoke + demo | `test_kafka_mcp.py` (16), `demo_end_to_end.py` (22 steps, all security codes) |
 | Examples | Six folders with real-world `data/` fixtures |
 | PyPI | `kafka-mcp-enterprise` · CLI `kafka-mcp-enterprise` |
@@ -319,7 +343,7 @@ See the **PyPI** section at the top for `pip install`, or [doc/publishing.md](do
 flowchart TB
   root["kafka-mcp-enterprise-server"]
   pkg["kafka_mcp/<br/>reference server"]
-  tests["tests/<br/>85-check suite"]
+  tests["tests/<br/>302-check suite"]
   docs["doc/<br/>guides + diagrams"]
   ex["examples/<br/>6 scenarios"]
   entry["serve_stdio.py · run_tests.py · demo_end_to_end.py"]
@@ -352,7 +376,15 @@ This reference aims at **production-grade practice** even while staying a teachi
 - **Taint / IFC is best-effort** - defeatable by data laundering; do not treat as complete mediation.  
 - **In-memory Kafka** - validates control logic; not a broker client.  
 - **stdio-first** - HTTP is specified in the KIP; this reference documents notes, full HTTP is a Java/production concern.  
-- **Secure-by-default in ops** - tighten `tools_allowed` to read/non-destructive in real deployments (see configuration guide).
+- **Secure-by-default** - shipped `tools_allowed` is read/consume only (`SECURE_DEFAULT_TOOLS`); enable mutate/destructive explicitly.
+
+### Note: Python reference vs Java production code
+
+This repository is a **Python reference implementation** for validating the KIP-1318 **security control model** (stdio + in-memory backend + conformance tests). It is **not** written in Java and is **not** the official Apache Kafka MCP server.
+
+Items listed as intentional gaps (Streamable HTTP / OAuth, live Admin-Producer-Consumer, EOS/fencing, Connect tools, distributed rate/audit state, JMX, and remaining tools/resources) are **specified for the real implementation** tracked under [KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436). Those belong in the **actual Java production module** (`tools/mcp-server`) and will be added there - not claimed as complete in this Python reference.
+
+Full matrix: [doc/kip-alignment.md](doc/kip-alignment.md).
 
 ---
 

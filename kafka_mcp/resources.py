@@ -12,8 +12,28 @@ from .errors import INVALID_PARAMS, METHOD_NOT_FOUND, McpError
 RESOURCE_LIST: List[Dict[str, str]] = [
     {"uri": "kafka://topics", "name": "topics", "description": "List topics"},
     {"uri": "kafka://topics/{name}", "name": "topic", "description": "Describe a topic"},
+    {
+        "uri": "kafka://topics/{name}/offsets",
+        "name": "topic-offsets",
+        "description": "Earliest/latest offsets per partition",
+    },
     {"uri": "kafka://cluster", "name": "cluster", "description": "Cluster metadata"},
     {"uri": "kafka://groups", "name": "groups", "description": "Consumer groups"},
+    {
+        "uri": "kafka://groups/{id}",
+        "name": "group",
+        "description": "Describe a consumer group",
+    },
+    {
+        "uri": "kafka://groups/{id}/offsets",
+        "name": "group-offsets",
+        "description": "Committed offsets for a group",
+    },
+    {
+        "uri": "kafka://groups/{id}/lag",
+        "name": "group-lag",
+        "description": "Per-topic/partition consumer lag (KIP Phase 1)",
+    },
     {"uri": "kafka://audit/recent", "name": "audit", "description": "Recent audit entries"},
     {"uri": "kafka://health", "name": "health", "description": "Health / circuit status"},
 ]
@@ -68,13 +88,23 @@ def read_resource(
     if head == "topics":
         if len(parts) == 1:
             return backend.list_topics()
-        return backend.describe_topic(parts[1])
+        if len(parts) == 2:
+            return backend.describe_topic(parts[1])
+        if len(parts) == 3 and parts[2] == "offsets":
+            return backend.topic_offsets(parts[1])
+        raise McpError(METHOD_NOT_FOUND, f"unknown resource uri: {uri}")
     if head == "cluster":
         return backend.describe_cluster()
     if head == "groups":
         if len(parts) == 1:
             return backend.list_groups()
-        return backend.describe_group(parts[1])
+        if len(parts) == 2:
+            return backend.describe_group(parts[1])
+        if len(parts) == 3 and parts[2] == "offsets":
+            return backend.group_offsets(parts[1])
+        if len(parts) == 3 and parts[2] == "lag":
+            return backend.group_lag_all(parts[1])
+        raise McpError(METHOD_NOT_FOUND, f"unknown resource uri: {uri}")
     if head == "audit":
         if audit_recent is None:
             return {"entries": []}

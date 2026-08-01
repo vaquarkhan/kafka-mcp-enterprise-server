@@ -1,4 +1,4 @@
-"""Security conformance tests (19 checks)."""
+"""Security conformance tests (20 checks)."""
 
 from __future__ import annotations
 
@@ -172,5 +172,17 @@ def run() -> Checker:
     sess = {"bearer_claims": {"aud": "other-api", "iss": "https://issuer.example"}}
     r = rpc(s, "tools/list", {}, session=sess)
     c.check("wrong audience rejected (anti token-passthrough)", err_code(r) == -32001, str(r))
+
+    from kafka_mcp.config import Config, SECURE_DEFAULT_TOOLS
+    from kafka_mcp.server import KafkaMcpServer
+
+    s_shipped = KafkaMcpServer(Config(approval_signing_secret=b"secure-default-test-key"))
+    listed = rpc(s_shipped, "tools/list", {})
+    names = {t["name"] for t in (result(listed).get("tools") or [])}
+    c.check(
+        "shipped Config exposes only SECURE_DEFAULT_TOOLS",
+        names == set(SECURE_DEFAULT_TOOLS),
+        f"got={sorted(names)} expected={sorted(SECURE_DEFAULT_TOOLS)}",
+    )
 
     return c

@@ -36,7 +36,7 @@ def run() -> Checker:
             props = schema.get("properties") or {}
             if "topic" not in props or "maxMessages" not in props:
                 schemas_ok = False
-    c.check("A2: tools/list publishes real inputSchema (11 tools)", len(TOOL_INPUT_SCHEMAS) == 11 and schemas_ok, str(tools[:2]))
+    c.check("A2: tools/list publishes real inputSchema (13 tools)", len(TOOL_INPUT_SCHEMAS) == 13 and schemas_ok, str(tools[:2]))
 
     r = call(s, "list_topics", {})
     c.check("A1: tools/call result is MCP content-shaped", mcp_content_ok(r), str(r))

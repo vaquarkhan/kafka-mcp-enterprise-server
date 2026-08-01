@@ -10,6 +10,16 @@ from typing import Any, Callable, List, Optional, Set
 SUPPORTED_PROTOCOL_VERSIONS: Set[str] = {"2024-11-05"}
 DEFAULT_PROTOCOL_VERSION = "2024-11-05"
 
+# KIP secure-by-default: only read / describe / consume are registered unless operators expand.
+SECURE_DEFAULT_TOOLS: List[str] = [
+    "list_topics",
+    "describe_topic",
+    "describe_cluster",
+    "list_consumer_groups",
+    "describe_consumer_group",
+    "consume_messages",
+]
+
 
 @dataclass
 class Config:
@@ -17,22 +27,20 @@ class Config:
 
     bootstrap_servers: str = "in-memory:9092"
     transport: str = "stdio"
-    # Secure-by-default recommendation in KIP: prefer read/non-destructive allow-list.
-    # Default "*" keeps the harness flexible; tests/demos set explicit allow-lists.
-    tools_allowed: List[str] = field(default_factory=lambda: ["*"])
+    # Matches KIP secure-by-default: mutate/destructive tools are NOT exposed until allow-listed.
+    # Tests/demos that need the full surface pass tools_allowed=["*"] explicitly.
+    tools_allowed: List[str] = field(default_factory=lambda: list(SECURE_DEFAULT_TOOLS))
     tools_denied: List[str] = field(default_factory=list)
     readonly: bool = False
     allowed_topic_prefixes: List[str] = field(default_factory=lambda: ["*"])
     allowed_group_prefixes: List[str] = field(default_factory=lambda: ["*"])
     taint_guard_enabled: bool = True
+    # Only names that are registered tools in this reference (no forward-compat phantoms).
     approval_required_tools: List[str] = field(
         default_factory=lambda: [
             "delete_topic",
-            "delete_records",
+            "delete_consumer_group",
             "create_acls",
-            "delete_acls",
-            "alter_partition_reassignments",
-            "alter_broker_config",
         ]
     )
     dryrun_tools: List[str] = field(default_factory=list)

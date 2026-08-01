@@ -39,3 +39,9 @@ examples/
 ```
 
 Each `run.py` exits **0** on success and **non-zero** if an expected control did not fire.
+
+---
+
+## Note: Python reference vs Java production code
+
+These examples exercise the **Python reference** server (in-memory Kafka). They do not demonstrate live brokers, Streamable HTTP, or EOS. Those belong in the **Java production** implementation under KAFKA-20436 - see [`doc/kip-alignment.md`](../doc/kip-alignment.md).

@@ -30,11 +30,11 @@
   <text x="64" y="342" class="t" fill="#e2e8f0" font-size="16">- Rate limits + circuit breakers</text>
 
   <text x="620" y="160" class="t" fill="#5eead4" font-size="14" font-weight="700">MCP + KAFKA SURFACE</text>
-  <text x="620" y="192" class="t" fill="#e2e8f0" font-size="16">- 11 MCP tools (read / mutate / destructive)</text>
+  <text x="620" y="192" class="t" fill="#e2e8f0" font-size="16">- 13 MCP tools (read / mutate / destructive)</text>
   <text x="620" y="222" class="t" fill="#e2e8f0" font-size="16">- kafka:// resources (topics, cluster, health)</text>
   <text x="620" y="252" class="t" fill="#e2e8f0" font-size="16">- Direct Partition Assignment</text>
   <text x="620" y="282" class="t" fill="#e2e8f0" font-size="16">- 15 error codes, config fields</text>
-  <text x="620" y="312" class="t" fill="#e2e8f0" font-size="16">- 85/85 conformance tests, 6 examples</text>
+  <text x="620" y="312" class="t" fill="#e2e8f0" font-size="16">- 302/302 conformance tests, 6 examples</text>
   <text x="620" y="342" class="t" fill="#e2e8f0" font-size="16">- 18 modules under kafka_mcp/</text>
 
   <!-- HOW IT RUNS - visual boxes, not ASCII arrows -->

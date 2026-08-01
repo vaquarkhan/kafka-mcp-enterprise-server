@@ -108,7 +108,11 @@ from kafka_mcp.server import KafkaMcpServer
 from kafka_mcp.transport import serve_stdio
 from kafka_mcp.approval import mint
 
-cfg = Config(allowed_topic_prefixes=["agent."], approval_signing_secret=b"test-approval-key")
+cfg = Config(
+    tools_allowed=["*"],
+    allowed_topic_prefixes=["agent."],
+    approval_signing_secret=b"test-approval-key",
+)
 server = KafkaMcpServer(cfg)
 # Pre-create out-of-scope topic for delete attempt
 server.backend.create_topic("prod.out-of-scope")

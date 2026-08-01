@@ -1,4 +1,4 @@
-"""Tool registry: 11 tools with kind/module/operation/resource_arg + JSON Schemas."""
+"""Tool registry: classified tools with kind/module/operation/resource_arg + JSON Schemas."""
 
 from __future__ import annotations
 
@@ -67,6 +67,15 @@ TOOL_DESCRIPTIONS: Dict[str, str] = {
         "authorization change; typically requires `_approval_token`. Binding resources must "
         "stay within topic/group scope prefixes. This reference does not list or delete ACLs; "
         "use broker-native admin for revoke/list outside this tool surface."
+    ),
+    "alter_consumer_group_offsets": (
+        "Reset committed offsets for a consumer group (`groupId` + `offsets` list of "
+        "{topic, partition, offset}). Mutating. KIP Phase 1 tool; group should be idle. "
+        "Use describe_consumer_group / kafka://groups/{id}/lag to inspect before reset."
+    ),
+    "delete_consumer_group": (
+        "Delete a consumer group and its committed offsets. Destructive; requires "
+        "`_approval_token` when approval is enabled. Use list_consumer_groups to discover ids."
     ),
 }
 
@@ -233,6 +242,39 @@ TOOL_INPUT_SCHEMAS: Dict[str, Dict[str, Any]] = {
         "required": ["bindings"],
         "additionalProperties": False,
     },
+    "alter_consumer_group_offsets": {
+        "type": "object",
+        "properties": {
+            "groupId": {"type": "string", "description": "Consumer group id"},
+            "offsets": {
+                "type": "array",
+                "description": "Offsets to commit/reset",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "topic": {"type": "string"},
+                        "partition": {"type": "integer", "minimum": 0},
+                        "offset": {"type": "integer", "minimum": 0},
+                    },
+                    "required": ["topic", "partition", "offset"],
+                },
+            },
+        },
+        "required": ["groupId", "offsets"],
+        "additionalProperties": False,
+    },
+    "delete_consumer_group": {
+        "type": "object",
+        "properties": {
+            "groupId": {"type": "string", "description": "Consumer group to delete"},
+            "_approval_token": {
+                "type": "string",
+                "description": "HMAC approval token when approval gate is enabled",
+            },
+        },
+        "required": ["groupId"],
+        "additionalProperties": False,
+    },
 }
 
 
@@ -303,6 +345,14 @@ def build_tools(backend: InMemoryKafka) -> Dict[str, Tuple[Handler, Meta]]:
     def create_acls(params: Dict[str, Any], session: Dict[str, Any]) -> Any:
         bindings = params.get("bindings") or params.get("acls") or []
         return backend.create_acls(bindings)
+
+    def alter_consumer_group_offsets(params: Dict[str, Any], session: Dict[str, Any]) -> Any:
+        gid = params.get("groupId") or params.get("group_id")
+        return backend.alter_group_offsets(str(gid), params.get("offsets") or [])
+
+    def delete_consumer_group(params: Dict[str, Any], session: Dict[str, Any]) -> Any:
+        gid = params.get("groupId") or params.get("group_id")
+        return backend.delete_group(str(gid))
 
     def meta(
         name: str,
@@ -424,6 +474,28 @@ def build_tools(backend: InMemoryKafka) -> Dict[str, Tuple[Handler, Meta]]:
                 module="control_plane",
                 operation="ALTER",
                 # Scope checked via SecurityPipeline._check_create_acls_scope (bindings).
+            ),
+        ),
+        "alter_consumer_group_offsets": (
+            alter_consumer_group_offsets,
+            meta(
+                "alter_consumer_group_offsets",
+                kind="mutate",
+                module="control_plane",
+                operation="ALTER",
+                group_arg="groupId",
+                resource_arg="groupId",
+            ),
+        ),
+        "delete_consumer_group": (
+            delete_consumer_group,
+            meta(
+                "delete_consumer_group",
+                kind="destructive",
+                module="control_plane",
+                operation="DELETE",
+                group_arg="groupId",
+                resource_arg="groupId",
             ),
         ),
     }

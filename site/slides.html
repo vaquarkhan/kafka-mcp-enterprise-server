@@ -16,8 +16,23 @@
 <section class="title-slide" data-background-color="#0f1b2d">
   <div class="kicker">Apache Kafka · KIP-1318 · Model Context Protocol</div>
   <h1>Kafka MCP Server</h1>
-  <p class="sub">A first-party, security-hardened way for AI agents to operate Apache Kafka.<br>Full feature tour, the security model, and proof that the guardrails hold.</p>
-  <p class="small">Reference implementation of Apache Kafka KIP-1318 · Vaquar Khan</p>
+  <p class="sub">KIP design + a Python conformance reference for the security control model.<br>What is specified, what is proven in code, and what is still future work.</p>
+  <p class="small">Python stdio / in-memory reference · Java is the KIP production target · Vaquar Khan</p>
+</section>
+
+<!-- 1b SCOPE -->
+<section data-background-color="#0f1b2d">
+  <h2>KIP design vs this reference</h2>
+  <p class="lede">One rule: describe the KIP as the full design; describe this repo as a control-model proof. Never claim the reference has a KIP capability listed as a gap.</p>
+  <table style="margin-top:.4em;font-size:.72em">
+    <tr><th>Area</th><th>This reference (proven)</th><th>KIP / Java track</th></tr>
+    <tr><td>Transport</td><td class="green">stdio only</td><td>stdio + Streamable HTTP + OAuth</td></tr>
+    <tr><td>Backend</td><td class="green">In-memory Kafka</td><td>Real Admin / Producer / Consumer</td></tr>
+    <tr><td>Tools / resources</td><td class="green">13 tools, subset of resources</td><td>~30+ tools, ~20 resources</td></tr>
+    <tr><td>Security pipeline</td><td class="green">9-step fail-closed, 302/302 tests</td><td>same model in production Java</td></tr>
+    <tr><td>EOS / fencing / distributed rate / durable audit</td><td>not implemented</td><td>specified in KIP</td></tr>
+  </table>
+  <p class="small" style="margin-top:.5em">Slides marked <span class="accent">KIP design</span> are aspirational. Slides marked <span class="green">reference</span> match code in this repo.</p>
 </section>
 
 <!-- 2 AGENDA -->
@@ -25,9 +40,9 @@
   <h2>Agenda</h2>
   <ol style="font-size:.82em">
     <li><span class="accent">The Kafka MCP Server</span>: what MCP is, why Kafka needs a first-party server</li>
-    <li><span class="accent">Features</span>: tools, resources, transports, stateful vs stateless</li>
+    <li><span class="accent">KIP features</span> (design) vs <span class="green">reference</span> (proven)</li>
     <li><span class="accent">Security model</span>: the fail-closed pipeline, mapped to OWASP</li>
-    <li><span class="accent">Proof</span>: every security control run as a pass/fail test</li>
+    <li><span class="accent">Proof</span>: 302 conformance checks on the control model</li>
     <li><span class="accent">Conclusion &amp; questions</span></li>
   </ol>
 </section>
@@ -85,114 +100,104 @@
 
 <!-- 7 GAP ANALYSIS -->
 <section>
-  <h2>Gaps in existing servers</h2>
-  <p class="lede">At least five open-source Kafka MCP servers already exist, which proves demand. All share critical gaps that this KIP fills.</p>
+  <h2>Gaps in existing servers <span class="accent">(KIP design)</span></h2>
+  <p class="lede">Open-source Kafka MCP servers already exist. The KIP aims to close shared gaps; the Python reference proves the <em>control model</em>, not every KIP tool yet.</p>
   <table style="margin-top:.4em">
-    <tr><th>Gap in existing servers</th><th>KIP-1318</th></tr>
-    <tr><td>No ACL management (security admin excluded)</td><td class="green">First MCP server to expose ACL management</td></tr>
-    <tr><td>No transactional produce (no exactly-once)</td><td class="green">produce_transactional (EOS)</td></tr>
-    <tr><td>No Streams or Share Group operations</td><td class="green">All four Kafka 4.x group types</td></tr>
-    <tr><td>Confluent-coupled (cloud REST only)</td><td class="green">Vanilla Apache Kafka, native clients</td></tr>
+    <tr><th>Gap in existing servers</th><th>KIP-1318 (design)</th></tr>
+    <tr><td>Weak or missing MCP-side guardrails</td><td class="green">9-step fail-closed pipeline (proven in reference)</td></tr>
+    <tr><td>No ACL management</td><td class="green">ACL tools in KIP; reference has in-memory <code>create_acls</code> only</td></tr>
+    <tr><td>No transactional produce (EOS)</td><td>KIP specifies <code>produce_transactional</code> - <strong>not in reference</strong></td></tr>
+    <tr><td>Cloud / REST coupling</td><td class="green">Vanilla Kafka clients (Java track)</td></tr>
   </table>
 </section>
 
 <!-- 8 CAPABILITIES -->
 <section>
-  <h2>New capabilities</h2>
+  <h2>Capabilities <span class="accent">(KIP design)</span> vs <span class="green">reference</span></h2>
   <div class="grid2">
-    <div class="card"><h3>Topics &amp; data</h3><ul>
-      <li>Create, describe, alter, delete topics via natural language</li>
-      <li>Produce and consume, including transactional exactly-once</li></ul></div>
-    <div class="card"><h3>Groups &amp; lag</h3><ul>
-      <li>Monitor consumer lag, reset offsets, manage membership</li></ul></div>
-    <div class="card"><h3>Security &amp; cluster</h3><ul>
-      <li>Manage ACLs (first MCP to do so)</li>
-      <li>Inspect cluster health, KRaft quorum, broker configs</li>
-      <li>Manage transactions: abort hanging, fence producers</li></ul></div>
-    <div class="card"><h3>Ecosystem &amp; deploy</h3><ul>
-      <li>Kafka Connect connectors (create, pause, resume, restart, delete)</li>
-      <li>Run locally (stdio) or remote (Streamable HTTP) with OAuth 2.1</li></ul></div>
+    <div class="card"><h3 class="green">Reference (implemented)</h3><ul>
+      <li>13 tools incl. Phase-1 group offset alter/delete + create_acls recorder</li>
+      <li>Resources: topics (+offsets), groups (+offsets/lag), cluster, audit, health</li>
+      <li>stdio + in-memory backend + 302/302 KIP-aligned tests</li></ul></div>
+    <div class="card"><h3 class="accent">KIP design (not in reference)</h3><ul>
+      <li>Streamable HTTP + OAuth 2.1, real broker clients</li>
+      <li>EOS / fencing, Connect suite, full group admin</li>
+      <li>Distributed rate limits, durable audit topic</li></ul></div>
   </div>
 </section>
 
 <!-- 9 TOOLS -->
 <section>
-  <h2>Tools, classified by risk</h2>
+  <h2>Tools in this reference <span class="green">(proven)</span></h2>
   <div class="grid3">
-    <div class="card"><h3 class="green">read</h3><ul>
+    <div class="card"><h3 class="green">read (default allow-list)</h3><ul>
       <li>list_topics, describe_topic</li><li>describe_cluster</li>
       <li>list / describe consumer groups</li><li>consume_messages</li></ul></div>
-    <div class="card"><h3 class="accent">mutate</h3><ul>
+    <div class="card"><h3 class="accent">mutate (opt-in)</h3><ul>
       <li>create_topic</li><li>alter_topic_config</li><li>produce_message</li>
-      <li>create_partitions</li></ul></div>
-    <div class="card"><h3 class="red">destructive-mutate</h3><ul>
-      <li>delete_topic, delete_records</li><li>create_acls, delete_acls</li>
-      <li>alter_broker_config</li><li>alter_partition_reassignments</li></ul></div>
+      <li>alter_consumer_group_offsets</li></ul></div>
+    <div class="card"><h3 class="red">destructive (opt-in + approval)</h3><ul>
+      <li>delete_topic</li><li>delete_consumer_group</li>
+      <li>create_acls (in-memory recorder)</li></ul></div>
   </div>
-  <p class="small" style="margin-top:.5em">Classification drives readonly mode, the approval gate, and the taint guard. Each tool declares <code>kind / module / operation / resource_arg</code>, plus a real JSON <code>inputSchema</code>.</p>
+  <p class="small" style="margin-top:.5em">Shipped default: read/consume only. Extra KIP tools (<code>delete_records</code>, Connect, EOS, …) are design-only here.</p>
 </section>
 
 <!-- 10 RESOURCES -->
 <section>
-  <h2>Resources (read-only, <code>kafka://</code>)</h2>
+  <h2>Resources <span class="green">(reference subset)</span></h2>
   <div class="grid2">
-    <div class="card"><h3>Topics &amp; groups</h3><ul>
+    <div class="card"><h3>Served here</h3><ul>
       <li><code>kafka://topics</code>, <code>/{name}</code>, <code>/{name}/offsets</code></li>
-      <li><code>kafka://groups/{id}</code>, <code>/offsets</code>, <code>/lag</code></li></ul></div>
-    <div class="card"><h3>Cluster</h3><ul>
-      <li><code>kafka://cluster</code>, <code>/configs/{broker}</code></li>
-      <li><code>/metadata-quorum</code> (KRaft), <code>/features</code></li></ul></div>
-    <div class="card"><h3>Security &amp; txns</h3><ul>
-      <li><code>kafka://acls</code>, <code>kafka://transactions/{id}</code></li>
-      <li><code>kafka://streams-groups</code>, <code>share-groups</code></li></ul></div>
-    <div class="card"><h3>Operations</h3><ul>
-      <li><code>kafka://audit/recent</code>: tool, identity, decision, correlation id</li>
-      <li><code>kafka://health</code>: per-module circuit-breaker health</li></ul></div>
+      <li><code>kafka://groups</code>, <code>/{id}</code>, <code>/offsets</code>, <code>/lag</code></li>
+      <li><code>kafka://cluster</code>, <code>audit/recent</code>, <code>health</code></li></ul></div>
+    <div class="card"><h3 class="accent">KIP design (not served here)</h3><ul>
+      <li>offsets / lag URIs, log-dirs, metadata-quorum</li>
+      <li>features, transactions, streams/share groups</li>
+      <li>connectors, acls resource, …</li></ul></div>
   </div>
 </section>
 
 <!-- 11 ARCHITECTURE -->
 <section>
   <h2>Architecture</h2>
-  <p class="lede">A standalone process (never inside the broker) that wraps <code>Admin</code>, <code>KafkaProducer</code>, and <code>KafkaConsumer</code>. Every request crosses transport, then the security pipeline, before reaching one of three decoupled modules.</p>
+  <p class="lede"><span class="accent">KIP:</span> standalone process wrapping real Admin/Producer/Consumer. <span class="green">Reference:</span> same pipeline shape over stdio + InMemoryKafka.</p>
   <div class="flow" style="margin-top:.6em">
     <span class="step">MCP client<br>(host)</span><span class="arrow">&rarr;</span>
-    <span class="step">Transport<br>stdio / HTTP</span><span class="arrow">&rarr;</span>
+    <span class="step">Transport<br>stdio <span class="accent">(HTTP: KIP)</span></span><span class="arrow">&rarr;</span>
     <span class="step">Security<br>pipeline</span><span class="arrow">&rarr;</span>
     <span class="step">Data-plane<br>produce / consume</span>
     <span class="step">Control-plane<br>topics / ACLs</span>
-    <span class="step">Ecosystem<br>Connect</span>
   </div>
-  <p class="small" style="margin-top:.7em">Modules are decoupled so a failure in one (its circuit breaker trips) cannot stall the others.</p>
+  <p class="small" style="margin-top:.7em">Modules use per-process circuit breakers. Connect / real brokers are Java-track work.</p>
 </section>
 
 <!-- 12 STATEFUL VS STATELESS -->
 <section>
-  <h2>Stateful vs stateless transports</h2>
+  <h2>Transports: reference vs KIP</h2>
   <div class="grid2">
-    <div class="card"><h3 class="cyan">stdio (stateful session)</h3><ul>
+    <div class="card"><h3 class="green">stdio (this reference)</h3><ul>
       <li>Host launches the server as a subprocess</li>
       <li>JSON-RPC over stdin/stdout, one local session</li>
       <li>Capability negotiation at initialize</li>
-      <li>Default for local development</li></ul></div>
-    <div class="card"><h3 class="accent">Streamable HTTP (stateless)</h3><ul>
-      <li>Each request is self-contained and independently authenticated</li>
-      <li><span class="green">No cross-request session state held</span></li>
-      <li>Removes session-hijacking and state-poisoning surface</li>
-      <li>Scales horizontally behind any load balancer, no sticky sessions</li></ul></div>
+      <li>What ships and is tested today</li></ul></div>
+    <div class="card"><h3 class="accent">Streamable HTTP (KIP design)</h3><ul>
+      <li>Specified for remote / multi-replica deploy</li>
+      <li>OAuth 2.1 / PKCE in the KIP</li>
+      <li><strong>Not implemented</strong> in this Python reference</li>
+      <li>No HTTP server, no latency benchmarks here</li></ul></div>
   </div>
-  <p class="small" style="margin-top:.5em">Stateless HTTP is the security and scale story: correctness never depends on server-held memory. OAuth 2.1 with PKCE guards the HTTP transport.</p>
 </section>
 
 <!-- 13 SECURITY LAYERS -->
 <section>
   <h2>Security architecture: layers</h2>
   <ul style="font-size:.72em">
-    <li><span class="accent">Layer 1, broker auth:</span> standard client props (<code>security.protocol</code>, <code>sasl.*</code>, <code>ssl.*</code>) passed to Admin/Producer/Consumer.</li>
-    <li><span class="accent">Layer 2, MCP auth (HTTP):</span> OAuth 2.1 with PKCE; server validates bearer tokens (audience/issuer). stdio needs no MCP-layer auth.</li>
-    <li><span class="accent">Authorization:</span> inherits Kafka ACLs. Broker ACLs are load-bearing; MCP guardrails complement, they do not replace, least privilege at the cluster.</li>
+    <li><span class="accent">Layer 1, broker auth (KIP / Java):</span> client props to real Admin/Producer/Consumer. Reference simulates ACLs in-memory.</li>
+    <li><span class="accent">Layer 2, MCP auth (HTTP, KIP):</span> OAuth 2.1; reference validates bearer audience/issuer when configured (stdio demos).</li>
+    <li><span class="accent">Authorization:</span> broker ACLs are load-bearing; MCP guardrails complement them.</li>
   </ul>
-  <div class="card" style="margin-top:.4em"><p style="font-size:.62em">Honest by design: the taint guard is best-effort (raises the bar on data-to-action escalation); broker ACLs remain the load-bearing control.</p></div>
+  <div class="card" style="margin-top:.4em"><p style="font-size:.62em">Honest by design: taint/DLP are best-effort; broker ACLs remain the load-bearing control.</p></div>
 </section>
 
 <!-- 14 PIPELINE -->
@@ -237,19 +242,19 @@
 <!-- 15b GUARDRAIL CONFIG SURFACE -->
 <section>
   <h2>Security guardrails: the config surface</h2>
-  <p class="lede">28 <code>mcp.*</code> guardrail properties, all opt-in with safe defaults. Secure-by-default posture: the recommended <code>tools.allowed</code> is read / non-destructive only, and operators enable destructive tools explicitly.</p>
+  <p class="lede">Reference config defaults match KIP secure-by-default: read/consume allow-list. Mutate/destructive tools are opt-in. Policy is an in-process hook (no OPA HTTP client here).</p>
   <table style="margin-top:.3em">
-    <tr><th>Guardrail</th><th>Property</th><th>Default</th></tr>
-    <tr><td>Tool allow / deny + readonly</td><td><code>mcp.tools.allowed</code> · <code>.denied</code> · <code>mcp.readonly</code></td><td>read set · none · false</td></tr>
-    <tr><td>Namespace scope</td><td><code>mcp.allowed.topic.prefixes</code> · <code>.group.prefixes</code></td><td><code>*</code> (tighten!)</td></tr>
-    <tr><td>Taint / IFC</td><td><code>mcp.taint.guard.enabled</code> · <code>mcp.ifc.strict</code></td><td>true · false</td></tr>
-    <tr><td>Approval + dry-run</td><td><code>mcp.approval.required.tools</code> · <code>mcp.dryrun.tools</code></td><td>destructive set · none</td></tr>
-    <tr><td>Policy engine (OPA / Cedar)</td><td><code>mcp.policy.engine.url</code></td><td>none (fail-closed)</td></tr>
-    <tr><td>Bounded output</td><td><code>mcp.hard.max.records</code> · <code>.hard.max.bytes</code> · <code>.max.output.bytes</code></td><td>100 · 1 MiB · 256 KiB</td></tr>
-    <tr><td>DLP + secret masking</td><td><code>mcp.dlp.mode</code> · <code>.block.categories</code> · <code>.redact.sensitive.configs</code></td><td>redact · key/JWT/AWS · true</td></tr>
-    <tr><td>Rogue-agent kill-switch</td><td><code>mcp.max.destructive.per.minute</code></td><td>10</td></tr>
-    <tr><td>Resilience + identity</td><td><code>mcp.circuit.breaker.enabled</code> · <code>mcp.identity.propagation</code></td><td>true · false</td></tr>
-    <tr><td>HTTP auth (OAuth 2.1)</td><td><code>mcp.oauth.expected.audience</code> · <code>.issuer</code></td><td>none</td></tr>
+    <tr><th>Guardrail</th><th>Property</th><th>Default (reference)</th></tr>
+    <tr><td>Tool allow / deny + readonly</td><td><code>tools_allowed</code> · <code>tools_denied</code> · <code>readonly</code></td><td>read/consume · none · false</td></tr>
+    <tr><td>Namespace scope</td><td><code>allowed_topic_prefixes</code> · <code>allowed_group_prefixes</code></td><td><code>*</code> (tighten!)</td></tr>
+    <tr><td>Taint / IFC</td><td><code>taint_guard_enabled</code> · <code>ifc_strict</code></td><td>true · false</td></tr>
+    <tr><td>Approval + dry-run</td><td><code>approval_required_tools</code> · <code>dryrun_tools</code></td><td>delete_topic, delete_consumer_group, create_acls · none</td></tr>
+    <tr><td>Policy engine</td><td>in-process callable (KIP: optional URL)</td><td>none (fail-closed)</td></tr>
+    <tr><td>Bounded output</td><td><code>hard_max_records</code> · <code>hard_max_bytes</code> · <code>max_output_bytes</code></td><td>100 · 1 MiB · 256 KiB</td></tr>
+    <tr><td>DLP + secret masking</td><td><code>dlp_mode</code> · <code>dlp_block_categories</code></td><td>redact · key/JWT/AWS</td></tr>
+    <tr><td>Rogue-agent kill-switch</td><td><code>max_destructive_per_minute</code></td><td>10</td></tr>
+    <tr><td>Resilience + identity</td><td><code>circuit_breaker_enabled</code> · <code>identity_propagation</code></td><td>true · false</td></tr>
+    <tr><td>Bearer audience/issuer</td><td><code>oauth_expected_audience</code> · <code>.issuer</code></td><td>none (no OAuth server)</td></tr>
   </table>
 </section>
 
@@ -260,7 +265,7 @@
     <tr><th>OWASP risk</th><th>KIP-1318 control</th><th>Code</th></tr>
     <tr><td><span class="red">LLM01</span> Prompt Injection</td><td>Taint guard / IFC, sensitive-topic gating on consume</td><td class="cyan">-32040</td></tr>
     <tr><td><span class="red">LLM02</span> Sensitive Information Disclosure</td><td>DLP redact/block, config-secret masking, bounded output</td><td class="cyan">-32045</td></tr>
-    <tr><td><span class="red">LLM03</span> Supply Chain</td><td>First-party Apache server, zero new deps (avoids unvetted third-party MCP)</td><td>-</td></tr>
+    <tr><td><span class="red">LLM03</span> Supply Chain</td><td>Prefer first-party / reviewed MCP; reference is stdlib-only core (Java track: zero <em>new</em> core deps)</td><td>-</td></tr>
     <tr><td><span class="red">LLM05</span> Improper Output Handling</td><td>Post-execute DLP scrub, MCP <code>content</code> + <code>isError</code> wrapping</td><td>-</td></tr>
     <tr><td><span class="red">LLM06</span> Excessive Agency</td><td>Allow/deny + readonly, prefix scope, approval gate, dry-run, kill-switch</td><td class="cyan">-32041 / -32042 / -32047</td></tr>
     <tr><td><span class="red">LLM10</span> Unbounded Consumption</td><td>Rate limits, circuit breakers, hard record/byte ceilings</td><td class="cyan">-32029 / -32043</td></tr>
@@ -294,10 +299,10 @@
       <li>Standard MCP wire shape, works with any MCP host</li></ul></div>
     <div class="card"><h3>Security &amp; compliance</h3><ul>
       <li>Fail-closed, identity from transport only</li>
-      <li>Replay-protected approvals, tamper-resistant audit trail</li></ul></div>
+      <li>Replay-protected approvals; in-process hash-chained audit (not a durable Kafka topic)</li></ul></div>
     <div class="card"><h3>Operations</h3><ul>
-      <li>Direct Partition Assignment removes ephemeral-consumer rebalance storms</li>
-      <li>Stateless HTTP scales without sticky sessions</li></ul></div>
+      <li>Per-process rate limits + circuit breakers (reference)</li>
+      <li>Horizontal HTTP scale is KIP design, not claimed here</li></ul></div>
   </div>
 </section>
 
@@ -327,7 +332,7 @@
     <tr><td>Domain error correctness</td><td>describe / produce unknown topic</td><td><code>UnknownTopic</code></td><td><span class="pill pass">PASS</span></td></tr>
     <tr><td>MCP content shape + schema (positive)</td><td>describe_cluster, list_topics, create_topic</td><td><code>content</code> + schema OK</td><td><span class="pill pass">PASS</span></td></tr>
   </table>
-  <p class="small" style="margin-top:.4em">A denial that returns the <span class="accent">correct error code</span> is the feature. The suite verifies the code, not just that "something threw." Broader coverage: the repo's own conformance suite (85 checks) exercises every control.</p>
+  <p class="small" style="margin-top:.4em">A denial that returns the <span class="accent">correct error code</span> is the feature. The suite verifies the code, not just that "something threw." Broader coverage: the repo's own conformance suite (302 checks) exercises every control.</p>
     <p class="small" style="margin-top:.2em;opacity:.7">Validated with a declarative, multi-language MCP test suite.</p>
 </section>
 
@@ -346,10 +351,22 @@
   <div class="kicker">Part 3</div>
   <h2>Conclusion</h2>
   <ul style="font-size:.78em">
-    <li>Agentic AI needs Kafka as its operating memory; a <span class="accent">first-party MCP server</span> is the prerequisite that makes Kafka agent-ready.</li>
-    <li>It ships the security the ecosystem lacks: a <span class="accent">9-step fail-closed pipeline</span> mapped to OWASP LLM risks.</li>
-    <li>Stateless HTTP + identity-from-transport shrink the attack surface; broker ACLs stay load-bearing.</li>
-    <li>Every control is a <span class="green">repeatable test</span>. Result: <span class="big-stat" style="font-size:1.1em">9 / 9 green</span>, engine and Java driven.</li>
+    <li>KIP-1318 is the full design (Java production track). This repo is a <span class="green">stdio / in-memory conformance reference</span> for the control model.</li>
+    <li>What is proven: a <span class="accent">9-step fail-closed pipeline</span>, DLP, approval, scopes, breakers - <span class="green">302/302</span> checks.</li>
+    <li>Not claimed here: Streamable HTTP, live brokers, EOS/fencing, distributed rate limits, durable audit topics.</li>
+    <li>Broker ACLs stay load-bearing; taint/DLP are best-effort complements.</li>
+  </ul>
+</section>
+
+<!-- 22b PYTHON VS JAVA -->
+<section data-background-color="#0f1b2d">
+  <h2>Note: Python reference vs Java production</h2>
+  <p class="lede">This codebase is a <span class="green">Python reference implementation</span>. It is not Java and not the official Kafka MCP server.</p>
+  <ul style="font-size:.78em">
+    <li>Purpose here: validate the security control model (stdio + in-memory + tests).</li>
+    <li>KIP production target: <span class="accent">Java</span> under KAFKA-20436 (<code>tools/mcp-server</code>).</li>
+    <li>Gaps (HTTP/OAuth, live brokers, EOS, Connect, distributed state, …) stay intentional in this reference.</li>
+    <li>Those features will be added in the <span class="accent">actual Java production code</span> - do not describe them as shipped here.</li>
   </ul>
 </section>
 
@@ -357,7 +374,7 @@
 <section class="title-slide" data-background-color="#0f1b2d">
   <div class="kicker">Thank you</div>
   <h1>Questions?</h1>
-  <p class="sub">Kafka MCP Server (KIP-1318) · MCP Test Suite 4.0.0</p>
+  <p class="sub">KIP-1318 security control model · Python conformance reference</p>
   <p class="small">KIP-1318 · KAFKA-20436 · github.com/vaquarkhan/kafka-mcp-enterprise-server</p>
 </section>
 

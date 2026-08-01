@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Quick 16-check smoke test (not part of the 85)."""
+"""Quick 16-check smoke test (not part of the 302)."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ def main() -> int:
         if check(name, cond):
             ok += 1
 
-    s = KafkaMcpServer(Config(allowed_topic_prefixes=["agent."], approval_signing_secret=SECRET))
+    s = KafkaMcpServer(Config(tools_allowed=["*"], allowed_topic_prefixes=["agent."], approval_signing_secret=SECRET))
     secret = s.cfg.approval_signing_secret
 
     r = s.handle(
@@ -166,7 +166,7 @@ def main() -> int:
     )
     expect("forged token -32042", (r.get("error") or {}).get("code") == -32042)
 
-    s2 = KafkaMcpServer(Config(readonly=True, approval_signing_secret=SECRET))
+    s2 = KafkaMcpServer(Config(tools_allowed=["*"], readonly=True, approval_signing_secret=SECRET))
     r = s2.handle(
         {
             "jsonrpc": "2.0",
@@ -189,7 +189,7 @@ def main() -> int:
     )
     expect("read on read-only allowed", "result" in r)
 
-    s3 = KafkaMcpServer(Config(tools_denied=["list_topics"], approval_signing_secret=SECRET))
+    s3 = KafkaMcpServer(Config(tools_allowed=["*"], tools_denied=["list_topics"], approval_signing_secret=SECRET))
     r = s3.handle(
         {
             "jsonrpc": "2.0",
@@ -202,7 +202,7 @@ def main() -> int:
     expect("deny-listed -32044", (r.get("error") or {}).get("code") == -32044)
 
     s4 = KafkaMcpServer(
-        Config(
+        Config(tools_allowed=["*"], 
             rate_requests_per_second=1,
             rate_admin_requests_per_second=1,
             approval_signing_secret=SECRET,
@@ -223,7 +223,7 @@ def main() -> int:
     expect("rate limit -32029", -32029 in codes)
 
     s5 = KafkaMcpServer(
-        Config(policy_engine=lambda *a, **k: False, approval_signing_secret=SECRET)
+        Config(tools_allowed=["*"], policy_engine=lambda *a, **k: False, approval_signing_secret=SECRET)
     )
     r = s5.handle(
         {
@@ -239,7 +239,7 @@ def main() -> int:
     def boom(*a, **k):
         raise RuntimeError("x")
 
-    s6 = KafkaMcpServer(Config(policy_engine=boom, approval_signing_secret=SECRET))
+    s6 = KafkaMcpServer(Config(tools_allowed=["*"], policy_engine=boom, approval_signing_secret=SECRET))
     r = s6.handle(
         {
             "jsonrpc": "2.0",
@@ -251,7 +251,7 @@ def main() -> int:
     )
     expect("policy error fails closed -32044", (r.get("error") or {}).get("code") == -32044)
 
-    s7 = KafkaMcpServer(Config(approval_signing_secret=SECRET))
+    s7 = KafkaMcpServer(Config(tools_allowed=["*"], approval_signing_secret=SECRET))
     s7.backend._inject_dependency_failure(True)
     codes = []
     for _ in range(4):
@@ -267,7 +267,7 @@ def main() -> int:
         codes.append((rr.get("error") or {}).get("code"))
     expect("dependency failure -32043", -32043 in codes)
 
-    s8 = KafkaMcpServer(Config(approval_signing_secret=SECRET))
+    s8 = KafkaMcpServer(Config(tools_allowed=["*"], approval_signing_secret=SECRET))
     s8.handle(
         {
             "jsonrpc": "2.0",

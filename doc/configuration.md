@@ -6,7 +6,7 @@
 |-------|---------|---------|
 | `bootstrap_servers` | `in-memory:9092` | Broker bootstrap (reference uses in-memory) |
 | `transport` | `stdio` | Transport hint |
-| `tools_allowed` | `["*"]` | Allow-list (`*` = all for harness). **KIP secure-by-default:** set an explicit read/non-destructive list in prod |
+| `tools_allowed` | `SECURE_DEFAULT_TOOLS` (read/consume only) | Allow-list. Use `["*"]` only in harnesses; expand deliberately for mutate/destructive |
 | `tools_denied` | `[]` | Deny-list |
 | `readonly` | `False` | Block all non-read tools (incl. produce) |
 | `allowed_topic_prefixes` | `["*"]` | Topic namespace scope |
@@ -14,7 +14,7 @@
 | `taint_guard_enabled` | `True` | Context → **mutate + destructive** taint checks |
 | `taint_min_length` | `8` | Ignore shorter tainted spans (reduces false positives) |
 | `taint_max_values` | `256` | Cap size of session tainted set |
-| `approval_required_tools` | delete/ACL/alter list | Tools needing `_approval_token` |
+| `approval_required_tools` | `delete_topic`, `delete_consumer_group`, `create_acls` | Registered tools needing `_approval_token` |
 | `approval_signing_secret` | `None` | **Required** to mint/verify tokens (no hardcoded default). Set via Config or `MCP_APPROVAL_SIGNING_SECRET` |
 | `approval_single_use_nonce` | `True` | Reject replayed approval nonces (in-process) |
 | `dryrun_tools` | `[]` | Tools that return dry-run result only |

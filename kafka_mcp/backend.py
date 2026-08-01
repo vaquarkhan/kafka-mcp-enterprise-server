@@ -261,6 +261,77 @@ class InMemoryKafka:
             lags.append({"partition": p, "endOffset": end, "committed": committed, "lag": lag})
         return {"groupId": group_id, "topic": topic, "lag": total, "partitions": lags}
 
+    def delete_group(self, group_id: str) -> Dict[str, Any]:
+        if group_id not in self.groups:
+            raise McpError(
+                INVALID_PARAMS,
+                "UnknownGroup",
+                data={"error": "UnknownGroup", "groupId": group_id},
+            )
+        del self.groups[group_id]
+        return {"deleted": group_id}
+
+    def alter_group_offsets(
+        self,
+        group_id: str,
+        offsets: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        """Reset committed offsets. KIP: group should be empty; reference accepts always."""
+        g = self.groups.setdefault(group_id, {"offsets": {}, "topics": set()})
+        applied = []
+        for item in offsets or []:
+            topic = str(item.get("topic") or "")
+            partition = int(item.get("partition", 0))
+            offset = int(item.get("offset", 0))
+            if not topic:
+                continue
+            key = f"{topic}:{partition}"
+            g["offsets"][key] = offset
+            g["topics"].add(topic)
+            applied.append({"topic": topic, "partition": partition, "offset": offset})
+        return {"groupId": group_id, "offsets": applied}
+
+    def topic_offsets(self, name: str) -> Dict[str, Any]:
+        t = self.topics.get(name)
+        if not t:
+            raise McpError(
+                INVALID_PARAMS,
+                "UnknownTopic",
+                data={"error": "UnknownTopic", "topic": name},
+            )
+        parts = []
+        for p in range(t["partitions"]):
+            end = len(t["log"][p])
+            parts.append({"partition": p, "earliest": 0, "latest": end})
+        return {"topic": name, "offsets": parts}
+
+    def group_offsets(self, group_id: str) -> Dict[str, Any]:
+        g = self.groups.get(group_id)
+        if not g:
+            return {"groupId": group_id, "offsets": {}, "state": "Empty"}
+        return {
+            "groupId": group_id,
+            "offsets": dict(g["offsets"]),
+            "state": "Stable",
+        }
+
+    def group_lag_all(self, group_id: str) -> Dict[str, Any]:
+        """Lag across all topics known to the group (KIP kafka://groups/{id}/lag)."""
+        g = self.groups.get(group_id, {"offsets": {}, "topics": set()})
+        topics: Set[str] = set(g.get("topics") or [])
+        for key in (g.get("offsets") or {}):
+            if ":" in key:
+                topics.add(key.rsplit(":", 1)[0])
+        per_topic = []
+        total = 0
+        for topic in sorted(topics):
+            if topic not in self.topics:
+                continue
+            lag_info = self.group_lag(group_id, topic)
+            total += int(lag_info.get("lag") or 0)
+            per_topic.append(lag_info)
+        return {"groupId": group_id, "lag": total, "topics": per_topic}
+
     def create_acls(self, bindings: List[Dict[str, Any]]) -> Dict[str, Any]:
         for b in bindings or []:
             self.acls.append(dict(b))

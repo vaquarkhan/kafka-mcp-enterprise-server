@@ -8,6 +8,7 @@ Instructions for **any** coding agent (Cursor, Kiro, GitHub Copilot, ChatGPT/Cod
 - PyPI: `kafka-mcp-enterprise` · CLI: `kafka-mcp-enterprise` · import: `kafka_mcp`.
 - **Not** the official Apache Kafka Java MCP server. Production language in the KIP is **Java**.
 - In-memory Kafka backend for conformance - not a live broker client.
+- Scope honesty: see `doc/kip-alignment.md` (stdio-only; no Streamable HTTP / EOS / distributed state in this reference).
 
 ## Non-negotiables
 
@@ -17,7 +18,7 @@ Instructions for **any** coding agent (Cursor, Kiro, GitHub Copilot, ChatGPT/Cod
 4. Keep **zero hard third-party deps** for core (`kafka_mcp/`). OTel is optional extra only.
 5. Do not commit `internal/` or `CURSOR-BUILD-INSTRUCTIONS.md` (gitignored).
 6. Destructive tools must stay behind allow-list + approval in production guidance.
-7. After behavior changes: `python run_tests.py` must stay **85/85**.
+7. After behavior changes: `python run_tests.py` must stay **302/302**.
 
 ## Layout
 
@@ -25,7 +26,7 @@ Instructions for **any** coding agent (Cursor, Kiro, GitHub Copilot, ChatGPT/Cod
 flowchart TB
   root["repo root"]
   root --> pkg["kafka_mcp/"]
-  root --> tests["tests/ · 85 checks"]
+  root --> tests["tests/ · 302 checks"]
   root --> ex["examples/0N_*/"]
   root --> docs["doc/"]
   root --> agents["AGENTS.md"]
@@ -50,10 +51,11 @@ echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | python serve_stdio.py
 | Security model | `doc/security-controls.md` + honesty rules above |
 | Config knobs | `doc/configuration.md` (32 fields) |
 | Errors | `doc/error-codes.md` |
-| KIP gaps | `doc/kip-alignment.md` |
+| KIP gaps | `doc/kip-alignment.md` (why gaps exist + Test Plan matrix in `tests/test_kip_conformance.py`) |
 | Add example | New `examples/0N_name/{README.md,run.py,data/}` using `examples/_common.py` |
 | Change pipeline | Update `server.py` / `security.py` / `guardrails.py` + matching tests |
 | Publish | `doc/publishing.md` - package name `kafka-mcp-enterprise` |
+| Coverage | `python run_coverage.py` (optional; expect 100% of `kafka_mcp/`) |
 
 ## Coding standards
 
@@ -70,3 +72,11 @@ Use project skills when relevant:
 - Cursor: `.cursor/skills/*/SKILL.md`
 - Portable (ChatGPT, Kiro, Gemini, etc.): `skills/*/SKILL.md`
 - Index: `doc/agents-and-skills.md`
+
+---
+
+## Note: Python reference vs Java production code
+
+This repo is a **Python reference implementation** (stdlib, in-memory, stdio). It is **not** the KIP-1318 production server.
+
+The KIP production target is **Java** ([KAFKA-20436](https://issues.apache.org/jira/browse/KAFKA-20436)). Intentional gaps here (HTTP/OAuth, live brokers, EOS, Connect, distributed state, …) belong in that **actual Java code** and must not be described as implemented in this reference. See `doc/kip-alignment.md`.

@@ -28,7 +28,7 @@ Also: validation `-32046`, egress `-32045`, quarantine `-32047`.
 - Docs claim taint fully stops prompt injection
 - Destructive tools enabled by default without calling out operator allow-list
 - New third-party deps added to core without explicit user request
-- Tests drop below 85/85 or omit new control paths
+- Tests drop below 302/302 or omit new control paths
 
 ## Pass criteria
 

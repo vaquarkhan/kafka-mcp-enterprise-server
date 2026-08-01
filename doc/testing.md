@@ -1,6 +1,6 @@
 # Testing
 
-## Conformance suite (85 checks)
+## Conformance suite (302 checks)
 
 ```bash
 python run_tests.py
@@ -9,14 +9,31 @@ python run_tests.py
 | File | Category | Count |
 |------|----------|-------|
 | `tests/test_functional.py` | Functional / tools | 12 |
-| `tests/test_security.py` | Security conformance | 19 |
+| `tests/test_security.py` | Security conformance | 20 |
 | `tests/test_guardrails.py` | Data-protection | 14 |
 | `tests/test_report_mechanisms.py` | KIP mechanisms | 13 |
 | `tests/test_resources.py` | `kafka://` resources | 6 |
 | `tests/test_integration_stdio.py` | stdio subprocess | 8 |
 | `tests/test_audit_hardening.py` | Protocol + audit fixes (A1-B8/C) | 13 |
+| `tests/test_coverage_gaps.py` | Branch / module coverage gap-fill | 123 |
+| `tests/test_kip_conformance.py` | KIP-1318 Test Plan + Phase-1 matrix | 93 |
 
-**Total = 85.** Expect: `TOTAL: 85/85 passed, 0 failed`.
+**Total = 302.** Expect: `TOTAL: 302/302 passed, 0 failed`.
+
+## Line coverage (optional)
+
+Requires the `coverage` package (not a runtime dependency of `kafka_mcp/`):
+
+```bash
+pip install coverage
+python run_coverage.py
+```
+
+Expect **100%** line coverage of `kafka_mcp/`. Config: [`.coveragerc`](../.coveragerc).
+
+## KIP checklist
+
+`tests/test_kip_conformance.py` maps each KIP Test Plan item and Phase-1 tool/resource to a check. Spec-only items (HTTP, Connect, EOS, live brokers) are asserted as **not registered**.
 
 ## Quick smoke (separate)
 
@@ -24,7 +41,7 @@ python run_tests.py
 python test_kafka_mcp.py
 ```
 
-16 checks covering a subset of security controls (not part of the 85).
+16 checks covering a subset of security controls (not part of the 302).
 
 ## Demo
 

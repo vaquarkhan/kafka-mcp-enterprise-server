@@ -180,7 +180,7 @@ class KafkaMcpServer:
             )
         return {
             "protocolVersion": DEFAULT_PROTOCOL_VERSION,
-            "serverInfo": {"name": "kafka-mcp-reference", "version": "0.1.1"},
+            "serverInfo": {"name": "kafka-mcp-reference", "version": "0.1.2"},
             "capabilities": {
                 "tools": {},
                 "resources": {},
@@ -192,7 +192,7 @@ class KafkaMcpServer:
         for name, (_h, meta) in self.tools.items():
             if name in (self.cfg.tools_denied or []):
                 continue
-            allowed = self.cfg.tools_allowed or ["*"]
+            allowed = self.cfg.tools_allowed
             if "*" not in allowed and name not in allowed:
                 continue
             if self.cfg.readonly and meta.get("kind") != "read":

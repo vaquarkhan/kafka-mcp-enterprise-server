@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kafka-mcp-enterprise"
-version = "0.1.1"
+version = "0.1.2"
 description = "Kafka MCP Enterprise reference server for KIP-1318 - fail-closed security controls, stdlib-only (conformance / teaching; not the official ASF Java module)."
 readme = "README.md"
 requires-python = ">=3.8"

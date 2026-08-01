@@ -25,8 +25,6 @@ def _prefix_allowed(name: str, prefixes: List[str]) -> bool:
     if not prefixes or "*" in prefixes:
         return True
     for p in prefixes:
-        if p == "*":
-            return True
         if p.endswith("*"):
             if name.startswith(p[:-1]):
                 return True
@@ -172,7 +170,7 @@ class SecurityPipeline:
             raise McpError(POLICY_DENIED, f"tool denied: {tool}")
 
         # 3) allow-list + readonly
-        allowed = cfg.tools_allowed or ["*"]
+        allowed = cfg.tools_allowed
         if "*" not in allowed and tool not in allowed:
             raise McpError(POLICY_DENIED, f"tool not in allow-list: {tool}")
         if cfg.readonly and kind != "read":

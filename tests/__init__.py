@@ -42,7 +42,9 @@ class Checker:
 
 
 def new_server(**kwargs: Any) -> KafkaMcpServer:
-    cfg = Config(**kwargs) if kwargs else Config()
+    if "tools_allowed" not in kwargs:
+        kwargs["tools_allowed"] = ["*"]
+    cfg = Config(**kwargs)
     return KafkaMcpServer(cfg)
 
 

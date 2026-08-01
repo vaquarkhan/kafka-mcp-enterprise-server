@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   test:
-    name: Conformance (72 checks)
+    name: Conformance (302 checks)
     runs-on: ubuntu-latest
     strategy:
       matrix:

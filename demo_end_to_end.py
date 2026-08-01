@@ -43,7 +43,7 @@ def main() -> None:
     def deny_acls(tool, params, session):
         return tool != "create_acls"
 
-    cfg = Config(
+    cfg = Config(tools_allowed=["*"], 
         allowed_topic_prefixes=["agent."],
         rate_requests_per_second=50,
         rate_admin_requests_per_second=50,
@@ -142,7 +142,7 @@ def main() -> None:
     )
 
     s_ro = KafkaMcpServer(
-        Config(
+        Config(tools_allowed=["*"], 
             readonly=True,
             allowed_topic_prefixes=["agent."],
             approval_signing_secret=b"demo-approval-key",
@@ -156,7 +156,7 @@ def main() -> None:
     )
 
     s_rate = KafkaMcpServer(
-        Config(
+        Config(tools_allowed=["*"], 
             rate_requests_per_second=1,
             rate_admin_requests_per_second=1,
             approval_signing_secret=b"demo-approval-key",
@@ -169,7 +169,7 @@ def main() -> None:
             track(call(s_rate, "list_topics", {}, {"identity": "bursty"})),
         )
 
-    s_dep = KafkaMcpServer(Config(approval_signing_secret=b"demo-approval-key"))
+    s_dep = KafkaMcpServer(Config(tools_allowed=["*"], approval_signing_secret=b"demo-approval-key"))
     s_dep.backend._inject_dependency_failure(True)
     for i in range(3):
         show(
@@ -180,7 +180,7 @@ def main() -> None:
 
     # Step 21: rogue quarantine (-32047)
     s_q = KafkaMcpServer(
-        Config(
+        Config(tools_allowed=["*"], 
             max_destructive_per_minute=2,
             allowed_topic_prefixes=["agent."],
             approval_signing_secret=b"demo-approval-key",

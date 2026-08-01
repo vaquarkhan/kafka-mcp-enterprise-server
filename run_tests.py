@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Master test runner - expect TOTAL: 85/85 passed, 0 failed."""
+"""Master test runner - expect TOTAL: all checks passed, 0 failed."""
 
 from __future__ import annotations
 
@@ -12,9 +12,11 @@ if str(ROOT) not in sys.path:
 
 from tests import (  # noqa: E402
     test_audit_hardening,
+    test_coverage_gaps,
     test_functional,
     test_guardrails,
     test_integration_stdio,
+    test_kip_conformance,
     test_report_mechanisms,
     test_resources,
     test_security,
@@ -30,6 +32,8 @@ def main() -> int:
         test_resources,
         test_integration_stdio,
         test_audit_hardening,
+        test_coverage_gaps,
+        test_kip_conformance,
     ]
     total_pass = 0
     total_fail = 0

@@ -42,6 +42,9 @@ class Checker:
 def new_server(**kwargs: Any) -> KafkaMcpServer:
     if "approval_signing_secret" not in kwargs:
         kwargs["approval_signing_secret"] = TEST_APPROVAL_SECRET
+    # Conformance suite exercises the full tool surface; production Config stays secure-by-default.
+    if "tools_allowed" not in kwargs:
+        kwargs["tools_allowed"] = ["*"]
     # Quiet insecure-default warnings in the harness unless testing them.
     logging.getLogger("kafka_mcp.server").setLevel(logging.ERROR)
     cfg = Config(**kwargs)

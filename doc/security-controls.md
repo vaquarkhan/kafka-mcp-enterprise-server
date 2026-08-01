@@ -67,7 +67,7 @@ flowchart LR
 
 ## Secure-by-default guidance
 
-In production, set `tools_allowed` to **read / non-destructive** tools only. Enable `delete_topic`, `create_acls`, etc. explicitly and keep them on `approval_required_tools`.
+In production and in the **shipped default**, `tools_allowed` is **read / consume only** (`SECURE_DEFAULT_TOOLS`). Mutate/destructive tools (`create_topic`, `produce_message`, `delete_topic`, `create_acls`, …) are exposed only when an operator adds them to the allow-list. Keep destructive tools on `approval_required_tools`.
 
 ## Honesty (important)
 

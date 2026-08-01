@@ -42,8 +42,8 @@
     <div class="hero-inner" id="main">
       <h1 class="hero-brand">Kafka MCP Enterprise</h1>
       <p class="hero-line">
-        A fail-closed MCP reference for agent workloads on Apache Kafka - KIP-1318,
-        stdlib Python, install from PyPI.
+        A fail-closed MCP <strong>conformance reference</strong> for agent workloads on Apache Kafka (KIP-1318):
+        stdio + in-memory backend. Not Streamable HTTP, not live brokers, not the Java production module.
       </p>
       <a class="deck-magnet" href="slides.html">
         <span class="deck-art" aria-hidden="true">
@@ -92,7 +92,7 @@
       <h2>All server features</h2>
       <p class="lede">
         Everything below is implemented in <code>kafka_mcp/</code> and covered by the
-        <strong>85/85</strong> conformance suite and/or examples, unless noted as an intentional reference gap.
+        <strong>302/302</strong> conformance suite and/or examples, unless noted as an intentional reference gap.
       </p>
       <figure class="feat-banner">
         <img src="assets/kafka-mcp-features.png" width="1200" height="620" alt="What this package includes: security pipeline, MCP tools, and how it runs">
@@ -115,7 +115,7 @@
       </article>
 
       <article class="feat-block">
-        <h3>B. Tools (11) - classified</h3>
+        <h3>B. Tools (13) - classified</h3>
         <table class="feat-table">
           <thead><tr><th>Tool</th><th>kind</th><th>module</th><th>Kafka op</th></tr></thead>
           <tbody>
@@ -128,10 +128,13 @@
             <tr><td><code>create_topic</code></td><td>mutate</td><td>control_plane</td><td>CREATE</td></tr>
             <tr><td><code>alter_topic_config</code></td><td>mutate</td><td>control_plane</td><td>ALTER</td></tr>
             <tr><td><code>produce_message</code></td><td>mutate</td><td>data_plane</td><td>WRITE</td></tr>
+            <tr><td><code>alter_consumer_group_offsets</code></td><td>mutate</td><td>control_plane</td><td>ALTER</td></tr>
             <tr><td><code>delete_topic</code></td><td>destructive</td><td>control_plane</td><td>DELETE</td></tr>
-            <tr><td><code>create_acls</code></td><td>destructive</td><td>control_plane</td><td>ALTER</td></tr>
+            <tr><td><code>delete_consumer_group</code></td><td>destructive</td><td>control_plane</td><td>DELETE</td></tr>
+            <tr><td><code>create_acls</code></td><td>destructive</td><td>control_plane</td><td>ALTER (in-memory binding recorder in this reference)</td></tr>
           </tbody>
         </table>
+        <p class="feat-note">Shipped default: six read/consume tools only (<code>SECURE_DEFAULT_TOOLS</code>).</p>
       </article>
 
       <article class="feat-block">
@@ -140,8 +143,12 @@
           <tbody>
             <tr><th><code>kafka://topics</code></th><td>List topics</td></tr>
             <tr><th><code>kafka://topics/{name}</code></th><td>Describe topic</td></tr>
+            <tr><th><code>kafka://topics/{name}/offsets</code></th><td>Earliest/latest offsets per partition</td></tr>
             <tr><th><code>kafka://cluster</code></th><td>Cluster id + brokers</td></tr>
             <tr><th><code>kafka://groups</code></th><td>Consumer groups</td></tr>
+            <tr><th><code>kafka://groups/{id}</code></th><td>Describe a consumer group</td></tr>
+            <tr><th><code>kafka://groups/{id}/offsets</code></th><td>Committed offsets</td></tr>
+            <tr><th><code>kafka://groups/{id}/lag</code></th><td>Per-topic/partition lag (KIP Phase 1)</td></tr>
             <tr><th><code>kafka://audit/recent</code></th><td>Recent audit entries</td></tr>
             <tr><th><code>kafka://health</code></th><td>Liveness + per-module circuit breaker state</td></tr>
           </tbody>
@@ -198,7 +205,7 @@
         <h3>G. Scoping, exposure &amp; identity</h3>
         <table class="feat-table">
           <tbody>
-            <tr><th>Allow / deny lists</th><td><code>tools_allowed</code>, <code>tools_denied</code></td></tr>
+            <tr><th>Allow / deny lists</th><td><code>tools_allowed</code> defaults to read/consume only; <code>tools_denied</code></td></tr>
             <tr><th>Readonly mode</th><td>Blocks create / produce / alter / delete / ACLs</td></tr>
             <tr><th>Prefixes</th><td><code>allowed_topic_prefixes</code>, <code>allowed_group_prefixes</code></td></tr>
             <tr><th>Identity propagation</th><td>Optional per-principal broker ACL check</td></tr>
@@ -264,7 +271,7 @@
         <table class="feat-table">
           <tbody>
             <tr><th>32 config fields</th><td>Scopes, DLP, approval secret, rate limits, IFC, hard caps, identity, OAuth audience/issuer, and more</td></tr>
-            <tr><th>Tests</th><td>85/85 conformance + smoke + end-to-end demo</td></tr>
+            <tr><th>Tests</th><td>302/302 conformance + smoke + end-to-end demo</td></tr>
             <tr><th>Examples</th><td>Six scenario folders with real-world <code>data/</code> fixtures</td></tr>
             <tr><th>PyPI</th><td><code>kafka-mcp-enterprise</code> · CLI <code>kafka-mcp-enterprise</code> · stdlib-only core</td></tr>
             <tr><th>Optional OTel</th><td><code>pip install kafka-mcp-enterprise[otel]</code> - not required</td></tr>
@@ -294,7 +301,7 @@
 echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise</code></pre>
         <aside class="aside">
           <h3>What ships</h3>
-          <p>11 MCP tools, DLP, HMAC approvals, Direct Partition Assignment, 85/85 conformance tests, and six scenario examples. Not the official Java ASF module.</p>
+          <p>13 MCP tools, DLP, HMAC approvals, Direct Partition Assignment, 302/302 conformance tests, and six scenario examples. Not the official Java ASF module.</p>
         </aside>
       </div>
     </div>
@@ -326,7 +333,8 @@ echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise</code
 
   <footer class="foot">
     <div class="wrap">
-      <p>Kafka MCP Enterprise - independent Python reference for KIP-1318.</p>
+      <p>Kafka MCP Enterprise - independent <strong>Python reference</strong> for KIP-1318 (not the Java production module).</p>
+      <p>Missing KIP surface (HTTP, live brokers, EOS, Connect, …) is intentional here and will be added in the <strong>actual Java code</strong> under KAFKA-20436 - see repo <code>doc/kip-alignment.md</code>.</p>
       <p><a href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">GitHub</a> · <a href="https://pypi.org/project/kafka-mcp-enterprise/">PyPI</a> · <a href="https://github.com/vaquarkhan">Vaquar Khan</a></p>
     </div>
   </footer>

@@ -13,14 +13,17 @@ description: >-
 
 - Package: `kafka-mcp-enterprise` · CLI: `kafka-mcp-enterprise` · import: `kafka_mcp`
 - Official KIP/Jira: KIP-1318 / KAFKA-20436 (Java is production target)
-- This repo: Python stdlib reference + 72 conformance tests
+- This repo: Python stdlib reference + 302 conformance tests
 
 ## Always do
 
 1. Read `AGENTS.md` at repo root.
 2. Prefer existing modules over new dependencies.
-3. After code changes run: `python run_tests.py` (expect `85/85`).
-4. Preserve honesty: taint best-effort; broker ACLs authoritative.
+3. After code changes run: `python run_tests.py` (expect `302/302`).
+4. Optional: `python run_coverage.py` (expect 100% line coverage of `kafka_mcp/`).
+5. Preserve honesty: taint best-effort; broker ACLs authoritative.
+6. Do not claim HTTP / live brokers / EOS / Connect as implemented - see `doc/kip-alignment.md`.
+7. Remember: this is a **Python reference**; production KIP work is **Java** (KAFKA-20436). Gaps belong there.
 
 ## Common workflows
 
@@ -38,7 +41,7 @@ python examples/01_sre_readonly_triage/run.py
 from kafka_mcp.config import Config
 from kafka_mcp.server import KafkaMcpServer
 
-s = KafkaMcpServer(Config(allowed_topic_prefixes=["agent."]))
+s = KafkaMcpServer(Config(tools_allowed=["*"], allowed_topic_prefixes=["agent."]))
 print(s.handle({
   "jsonrpc":"2.0","id":1,"method":"tools/call",
   "params":{"name":"create_topic","arguments":{"name":"agent.demo"}}
