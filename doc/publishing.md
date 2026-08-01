@@ -72,8 +72,8 @@ Repeat on https://test.pypi.org with environment `testpypi` only if you add a Te
 4. Tag and push:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 5. Watch **Actions → publish** - runs 85 tests, builds wheel/sdist, optional SBOM, then publishes via OIDC.  

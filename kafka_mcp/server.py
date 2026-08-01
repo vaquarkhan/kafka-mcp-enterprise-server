@@ -180,7 +180,7 @@ class KafkaMcpServer:
             )
         return {
             "protocolVersion": DEFAULT_PROTOCOL_VERSION,
-            "serverInfo": {"name": "kafka-mcp-reference", "version": "0.1.0"},
+            "serverInfo": {"name": "kafka-mcp-reference", "version": "0.1.1"},
             "capabilities": {
                 "tools": {},
                 "resources": {},
