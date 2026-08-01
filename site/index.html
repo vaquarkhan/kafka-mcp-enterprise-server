@@ -3,102 +3,114 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kafka MCP Server (KIP-1318): Security-Proven Agentic Tooling</title>
-  <meta name="description" content="A first-party, security-hardened Kafka MCP server for AI agents (Apache KIP-1318), with a fail-closed control pipeline mapped to OWASP.">
+  <title>Kafka MCP Enterprise</title>
+  <meta name="description" content="Python stdlib MCP reference for Apache Kafka (KIP-1318): fail-closed security, DLP, approvals, and conformance tests.">
+  <meta property="og:title" content="Kafka MCP Enterprise">
+  <meta property="og:description" content="Governed Kafka tool access for AI agents - KIP-1318 reference server.">
+  <meta property="og:image" content="https://vaquarkhan.github.io/kafka-mcp-enterprise-server/assets/kafka-mcp-banner.png">
+  <meta property="og:url" content="https://vaquarkhan.github.io/kafka-mcp-enterprise-server/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;550;650;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
 
-<header class="hero">
-  <div class="wrap">
-    <div class="kicker">Apache Kafka | KIP-1318 | Model Context Protocol</div>
-    <h1>Kafka MCP Server <span class="accent">(KIP-1318)</span></h1>
-    <p class="lede">A first-party, security-hardened MCP server that gives AI agents <strong>safe, governed</strong> access to Apache Kafka, with a fail-closed control pipeline mapped to OWASP and proven by tests.</p>
-    <div class="btns">
-      <a class="btn primary" href="https://vaquarkhan.github.io/kafka-mcp-enterprise-server/">Website</a>
-      <a class="btn ghost" href="https://pypi.org/project/kafka-mcp-enterprise/">PyPI</a>
-      <a class="btn ghost" href="https://glama.ai/mcp/servers/vaquarkhan/kafka-mcp-enterprise-server">Glama</a>
+  <header class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-veil" aria-hidden="true"></div>
 
-      <a class="btn primary" href="slides.html">View the presentation</a>
-      <a class="btn ghost" href="mcp-dashboard.html">Live test report</a>
-      <a class="btn ghost" href="revalidation-dashboard.svg">Dashboard (SVG)</a>
-      <a class="btn ghost" href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">Server repo</a>
-      <a class="btn ghost" href="https://github.com/vaquarkhan/mcp-test-suite">Test suite repo</a>
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./">
+        <span class="mark" aria-hidden="true"></span>
+        Kafka MCP Enterprise
+      </a>
+      <div class="nav-links">
+        <a href="#install">Install</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="slides.html">Slides</a>
+        <a href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">GitHub</a>
+      </div>
+    </nav>
+
+    <div class="hero-inner" id="main">
+      <h1 class="hero-brand">Kafka MCP Enterprise</h1>
+      <p class="hero-line">
+        A fail-closed MCP reference for agent workloads on Apache Kafka - KIP-1318,
+        stdlib Python, install from PyPI.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://pypi.org/project/kafka-mcp-enterprise/">Install from PyPI</a>
+        <a class="btn btn-ghost" href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">View source</a>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<section>
-  <div class="wrap">
-    <h2>At a glance</h2>
-    <div class="stats">
-      <div class="stat"><div class="n">11</div><div class="l">governed Kafka tools</div></div>
-      <div class="stat"><div class="n">9</div><div class="l">fail-closed pipeline stages</div></div>
-      <div class="stat"><div class="n">9/9</div><div class="l">re-validation tests green</div></div>
-      <div class="stat"><div class="n">2x</div><div class="l">proven engine- &amp; Java-driven</div></div>
+  <section class="section" id="pipeline">
+    <div class="wrap">
+      <h2>Fail-closed by design</h2>
+      <p class="lede">
+        Every tools/call walks nine gates. The first denial wins. Broker ACLs stay authoritative.
+      </p>
+      <div class="pipeline" aria-label="Security pipeline stages">
+        <div class="step"><b>01</b><span>Auth</span></div>
+        <div class="step"><b>02</b><span>Deny</span></div>
+        <div class="step"><b>03</b><span>Allow</span></div>
+        <div class="step"><b>04</b><span>Scope</span></div>
+        <div class="step"><b>05</b><span>Policy</span></div>
+        <div class="step"><b>06</b><span>Taint</span></div>
+        <div class="step"><b>07</b><span>Approval</span></div>
+        <div class="step"><b>08</b><span>Rate</span></div>
+        <div class="step"><b>09</b><span>Breaker</span></div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="wrap">
-    <h2>The Kafka MCP Server</h2>
-    <p class="lede" style="max-width:820px">A reference implementation of KIP-1318. Pure-Python, in-memory Kafka backend, and a 9-step fail-closed control pipeline that decides what an agent is allowed to do before anything touches the broker.</p>
-    <div class="grid" style="margin-top:18px">
-      <div class="card"><h3>Scope &amp; access</h3><p>Topic/group prefix allow-lists (<code>agent.*</code>, <code>sandbox.*</code>), readonly mode, tool allow/deny lists, pluggable policy engine.</p></div>
-      <div class="card"><h3>Approval gate</h3><p>HMAC-signed, TTL-bounded tokens bound to <strong>tool + resource + principal</strong>, with single-use nonce replay protection.</p></div>
-      <div class="card"><h3>Data protection</h3><p>DLP redaction/blocking for keys, JWTs and AWS creds; payload-only scrubbing; byte-bounded reads.</p></div>
-      <div class="card"><h3>Integrity &amp; resilience</h3><p>Taint/IFC so untrusted data can't drive mutate/destructive calls; rate limits, circuit breakers, anomaly tracking, audit sink.</p></div>
+  <section class="section" id="install">
+    <div class="wrap">
+      <h2>Install in one line</h2>
+      <p class="lede">CLI entrypoint: <code>kafka-mcp-enterprise</code>. Import: <code>kafka_mcp</code>.</p>
+      <div class="install">
+        <pre><code>pip install kafka-mcp-enterprise
+echo {"jsonrpc":"2.0","id":1,"method":"tools/list"} | kafka-mcp-enterprise</code></pre>
+        <aside class="aside">
+          <h3>What ships</h3>
+          <p>11 MCP tools, DLP, HMAC approvals, Direct Partition Assignment, 85/85 conformance tests, and six scenario examples. Not the official Java ASF module.</p>
+        </aside>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="wrap">
-    <h2>Security model</h2>
-    <p class="lede" style="max-width:820px">A 9-step, fail-closed pipeline where the first denial wins, mapped to the OWASP Top 10 for LLM Applications. Identity comes only from the transport, never from tool arguments.</p>
-    <div class="grid" style="margin-top:18px">
-      <div class="card"><h3>LLM01 Prompt Injection</h3><p>Taint guard / IFC and sensitive-topic gating stop read-derived data from driving destructive calls (<code>-32040</code>).</p></div>
-      <div class="card"><h3>LLM06 Excessive Agency</h3><p>Prefix scope, allow/deny, readonly, approval tokens, dry-run, and a rogue-agent kill-switch (<code>-32041 / -32042 / -32047</code>).</p></div>
-      <div class="card"><h3>LLM02 &amp; LLM10</h3><p>DLP redaction and config masking for disclosure; rate limits, circuit breakers, and bounded reads for unbounded consumption.</p></div>
+  <section class="section" id="proof">
+    <div class="wrap">
+      <h2>Proof, not marketing</h2>
+      <p class="lede">Guardrails return the right error codes - not just "something failed."</p>
+      <div class="proof">
+        <img src="revalidation-dashboard.svg" width="1100" height="620" alt="Re-validation dashboard showing passing security checks">
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="wrap">
-    <h2>Proof: re-validation results <span class="pill">100% pass</span></h2>
-    <p class="lede" style="max-width:820px">Every guardrail is expressed as a test. Denials return the <strong>right error code</strong> (scope <code>-32041</code>, approval <code>-32042</code>), not just "something threw."</p>
-    <img class="dash" src="revalidation-dashboard.svg" alt="Re-validation dashboard: 9 passed, 0 failed">
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>What's next</h2>
-    <div class="grid">
-      <div class="card"><h3>Server roadmap</h3>
-        <ul class="clean" style="font-size:.92rem">
-          <li>Stateful/session mode + real-Kafka backend</li>
-          <li><code>structuredContent</code> + standard tool hints</li>
-          <li>Shared nonce/rate stores, HTTP transport, full OAuth (JWKS)</li>
-        </ul></div>
-      <div class="card"><h3>Test-suite roadmap</h3>
-        <ul class="clean" style="font-size:.92rem">
-          <li>Public engine API (drop private-symbol fallback)</li>
-          <li>Ordered stateful sessions; richer assertions (JSONPath)</li>
-          <li>Native per-language clients; suite-file schema validation</li>
-        </ul></div>
+  <section class="section">
+    <div class="wrap">
+      <h2>Keep exploring</h2>
+      <p class="lede">Docs live in the repository. The site is packaging and orientation only.</p>
+      <div class="links">
+        <a class="chip" href="slides.html">Presentation</a>
+        <a class="chip" href="mcp-dashboard.html">Test report</a>
+        <a class="chip" href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server/tree/main/doc">Documentation</a>
+        <a class="chip" href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-1318%3A+Model+Context+Protocol+%28MCP%29+Server+for+Apache+Kafka">KIP-1318</a>
+        <a class="chip" href="https://issues.apache.org/jira/browse/KAFKA-20436">KAFKA-20436</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="wrap">
-    <p>Kafka MCP Server (KIP-1318) · MCP Test Suite 4.0.0 · reference implementation by <a href="https://github.com/vaquarkhan">Vaquar Khan</a>.</p>
-    <p><a href="slides.html">Presentation</a> · <a href="revalidation-dashboard.svg">Dashboard</a> · <a href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">Server</a> · <a href="https://github.com/vaquarkhan/mcp-test-suite">Test suite</a></p>
-  </div>
-</footer>
-
+  <footer class="foot">
+    <div class="wrap">
+      <p>Kafka MCP Enterprise - independent Python reference for KIP-1318.</p>
+      <p><a href="https://github.com/vaquarkhan/kafka-mcp-enterprise-server">GitHub</a> · <a href="https://pypi.org/project/kafka-mcp-enterprise/">PyPI</a> · <a href="https://github.com/vaquarkhan">Vaquar Khan</a></p>
+    </div>
+  </footer>
 </body>
 </html>

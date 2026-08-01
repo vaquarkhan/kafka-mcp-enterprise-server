@@ -3,7 +3,6 @@
 [![PyPI](https://img.shields.io/pypi/v/kafka-mcp-enterprise?cacheSeconds=3600)](https://pypi.org/project/kafka-mcp-enterprise/)
 [![Python](https://img.shields.io/pypi/pyversions/kafka-mcp-enterprise?cacheSeconds=3600)](https://pypi.org/project/kafka-mcp-enterprise/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-[![kafka-mcp-enterprise-server MCP server](https://glama.ai/mcp/servers/vaquarkhan/kafka-mcp-enterprise-server/badges/card.svg)](https://glama.ai/mcp/servers/vaquarkhan/kafka-mcp-enterprise-server)
 
 ![Kafka MCP Enterprise - product image](doc/assets/kafka-mcp-banner.png)
 
@@ -16,7 +15,6 @@
 | **Site** | [https://vaquarkhan.github.io/kafka-mcp-enterprise-server/](https://vaquarkhan.github.io/kafka-mcp-enterprise-server/) |
 | **Source** | [`site/`](site/) (`index.html` + local [`site/assets/site.css`](site/assets/site.css)) |
 | **Deploy** | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes `site/` on push to `main` |
-| **Glama** | [Server](https://glama.ai/mcp/servers/vaquarkhan/kafka-mcp-enterprise-server) · [Score](https://glama.ai/mcp/servers/vaquarkhan/kafka-mcp-enterprise-server/score) |
 
 ### PyPI
 
